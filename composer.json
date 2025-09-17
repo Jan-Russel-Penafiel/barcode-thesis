@@ -1,0 +1,21 @@
+{
+    "name": "jericho/barcode",
+    "description": "Barcode Attendance System",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Jericho\\Barcode\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "jericho",
+            "email": "jrchndrs2023@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "picqer/php-barcode-generator": "^3.2",
+        "phpmailer/phpmailer": "^6.10"
+    }
+}

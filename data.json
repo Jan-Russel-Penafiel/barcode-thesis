@@ -1,0 +1,170 @@
+{
+    "users": [
+        {
+            "username": "admin",
+            "password": "$2y$10$ZEF1hSF7SE4EvWOLFAAIG.mSuMOZWxTmYTQxwdOjscNp3kcrrh3uS"
+        },
+        {
+            "username": "admin96",
+            "password": "$2y$10$lIW0JOLdGy7mWssFqoz7n.W8aH2H42aisFaMrm6CBaEah6\/OPTRfu"
+        },
+        {
+            "username": "admin12731",
+            "password": "$2y$10$rdKqT6rilo0w.FY6YV9CFedU3N5DTwNWXVN9SmnFEoBfQT55IfMSi"
+        },
+        {
+            "username": "admin127313231113",
+            "password": "$2y$10$3MuoxIedxqkQRQ3Mp3k12eWAkebH1SVC9oxiieLNVZwdqAgfneXDq"
+        },
+        {
+            "username": "jona123",
+            "password": "$2y$10$QN8SWpGkori9bZJjvXUWR.OzvDzaKGTtrG8XoERZWT.EYRP1qg4ui"
+        },
+        {
+            "username": "dave123",
+            "password": "$2y$10$oPeYwyNezdNML1uHPhCvPegvFZKlFsMehkMkG51MMvF20pfwh6Pf2"
+        },
+        {
+            "username": "dave12",
+            "password": "$2y$10$nnv0x2gN2LXEl.JzAXo5KO8RNC9h\/AtIzi5b2bJ3svdgHGDRVHlJy"
+        },
+        {
+            "username": "mj69",
+            "password": "$2y$10$n3OUm0g2ZqKV545anfLaVelQ0cMdc5WgnqNOEenTrUBSI70vA3E1q"
+        },
+        {
+            "username": "johannah28",
+            "password": "$2y$10$CyHJMcg9cHXUuOcvysQ91uYtL5S.hsPxhgsOyNQdCDTJxuAZ8sJM6"
+        }
+    ],
+    "barcodes": [
+        {
+            "barcode": "17556743189659",
+            "name": "dave",
+            "course": "bisis",
+            "course_year": "2"
+        },
+        {
+            "barcode": "17557402804336",
+            "name": "jona",
+            "course": "bsis",
+            "course_year": "2"
+        },
+        {
+            "barcode": "17557635642763",
+            "name": "jona1",
+            "course": "bsis",
+            "course_year": "2"
+        },
+        {
+            "barcode": "17557639457222",
+            "name": "jona",
+            "course": "bsis",
+            "course_year": "3"
+        },
+        {
+            "barcode": "17575853726900",
+            "name": "jona3",
+            "course": "bsis",
+            "course_year": "3"
+        },
+        {
+            "barcode": "17575898277771",
+            "name": "dkd",
+            "course": "sfs",
+            "course_year": "fdfd"
+        }
+    ],
+    "attendance": [
+        {
+            "barcode": "17556743189659",
+            "name": "dave",
+            "course": "bisis",
+            "course_year": "2",
+            "date": "2025-08-20",
+            "day": "Wednesday",
+            "time_in": "15:18:55",
+            "time_out": "15:19:01"
+        },
+        {
+            "barcode": "17557402804336",
+            "name": "jona",
+            "course": "bsis",
+            "course_year": "2",
+            "date": "2025-08-21",
+            "day": "Thursday",
+            "time_in": "09:38:54",
+            "time_out": "09:39:01"
+        },
+        {
+            "barcode": "17557635642763",
+            "name": "jona1",
+            "course": "bsis",
+            "course_year": "2",
+            "date": "2025-08-21",
+            "day": "Thursday",
+            "time_in": "16:12:01",
+            "time_out": "16:12:12"
+        },
+        {
+            "barcode": "17557635642763",
+            "name": "jona1",
+            "course": "bsis",
+            "course_year": "2",
+            "date": "2025-09-12",
+            "day": "Friday",
+            "time_in": "18:31:16",
+            "time_out": ""
+        },
+        {
+            "barcode": "17557635642763",
+            "name": "jona1",
+            "course": "bsis",
+            "course_year": "2",
+            "date": "2025-09-17",
+            "day": "Wednesday",
+            "time_in": "18:25:26",
+            "time_out": ""
+        },
+        {
+            "barcode": "17556743189659",
+            "name": "dave",
+            "course": "bisis",
+            "course_year": "2",
+            "date": "2025-09-17",
+            "day": "Wednesday",
+            "time_in": "18:46:09",
+            "time_out": "18:47:51"
+        },
+        {
+            "barcode": "17557402804336",
+            "name": "jona",
+            "course": "bsis",
+            "course_year": "2",
+            "date": "2025-09-17",
+            "day": "Wednesday",
+            "time_in": "19:00:29",
+            "time_out": ""
+        },
+        {
+            "barcode": "17557639457222",
+            "name": "jona",
+            "course": "bsis",
+            "course_year": "3",
+            "date": "2025-09-17",
+            "day": "Wednesday",
+            "time_in": "19:01:58",
+            "time_out": ""
+        },
+        {
+            "barcode": "17575853726900",
+            "name": "jona3",
+            "course": "bsis",
+            "course_year": "3",
+            "date": "2025-09-17",
+            "day": "Wednesday",
+            "time_in": "19:05:47",
+            "time_out": ""
+        }
+    ]
+}
