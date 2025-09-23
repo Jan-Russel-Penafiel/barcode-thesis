@@ -216,9 +216,9 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
                         <thead>
                             <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
                                 <th class="py-3 px-6 text-center">Barcode</th>
-                                <th class="py-3 px-6 text-center">Name</th>
-                                <th class="py-3 px-6 text-center">Course</th>
-                                <th class="py-3 px-6 text-center">Year</th>
+                                <th class="py-3 px-6 text-center">Student Name</th>
+                                <th class="py-3 px-6 text-center">Strand</th>
+                                <th class="py-3 px-6 text-center">Year Level</th>
                                 <th class="py-3 px-6 text-center">Actions</th>
                             </tr>
                         </thead>
@@ -292,15 +292,15 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
             <form id="editForm" class="space-y-4">
                 <input type="hidden" id="editBarcodeId" name="barcode">
                 <div class="text-left">
-                    <label for="editName" class="block text-sm font-medium text-gray-700 mb-1">Name:</label>
+                    <label for="editName" class="block text-sm font-medium text-gray-700 mb-1">Student Name:</label>
                     <input type="text" id="editName" name="name" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                 </div>
                 <div class="text-left">
-                    <label for="editCourse" class="block text-sm font-medium text-gray-700 mb-1">Course:</label>
+                    <label for="editCourse" class="block text-sm font-medium text-gray-700 mb-1">Strand:</label>
                     <input type="text" id="editCourse" name="course" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                 </div>
                 <div class="text-left">
-                    <label for="editYear" class="block text-sm font-medium text-gray-700 mb-1">Year:</label>
+                    <label for="editYear" class="block text-sm font-medium text-gray-700 mb-1">Year Level:</label>
                     <input type="text" id="editYear" name="course_year" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                 </div>
                 <div class="flex justify-center space-x-4 mt-6">
@@ -343,9 +343,9 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
             <button class="close-btn" id="closeBarcodeModal">&times;</button>
             <h3 class="text-xl font-semibold text-gray-700 mb-4">Barcode Details</h3>
             <div id="barcodeDetails">
-                <p><strong>Name:</strong> <span id="modalName"></span></p>
-                <p><strong>Course:</strong> <span id="modalCourse"></span></p>
-                <p><strong>Year:</strong> <span id="modalYear"></span></p>
+                <p><strong>Student Name:</strong> <span id="modalName"></span></p>
+                <p><strong>Strand:</strong> <span id="modalCourse"></span></p>
+                <p><strong>Year Level:</strong> <span id="modalYear"></span></p>
                 <p><strong>Barcode ID:</strong> <span id="modalBarcodeId"></span></p>
             </div>
             <img id="enlargedBarcode" class="enlarged-barcode" src="" alt="Enlarged Barcode">

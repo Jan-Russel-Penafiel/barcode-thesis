@@ -24,45 +24,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $barcode = time() . rand(1000, 9999);
         $generator = new BarcodeGeneratorPNG();
         $barcodeImage = $generator->getBarcode($barcode, $generator::TYPE_CODE_128, 2, 50);
-        $barcodeResource = imagecreatefromstring($barcodeImage);
-        if (!$barcodeResource) {
-            $error = "Failed to generate barcode image.";
+        
+        if (!file_exists(BASE_DIR . '/barcodes')) {
+            mkdir(BASE_DIR . '/barcodes', 0777, true);
+        }
+        $barcodeFile = BASE_DIR . "/barcodes/$barcode.png";
+        if (!file_put_contents($barcodeFile, $barcodeImage)) {
+            $error = "Failed to save barcode image.";
         } else {
-            $barcodeWidth = imagesx($barcodeResource);
-            $barcodeHeight = imagesy($barcodeResource);
-            $fontSize = 4;
-            $fontWidth = imagefontwidth($fontSize);
-            $sidePadding = 20;
-            $textLines = ["Name: $name", "Course: $course", "Year: $course_year"];
-            $maxTextWidth = 0;
-            foreach ($textLines as $text) {
-                $textPixelWidth = $fontWidth * strlen($text);
-                $maxTextWidth = max($maxTextWidth, $textPixelWidth);
-            }
-            $imageWidth = max($barcodeWidth, $maxTextWidth) + 2 * $sidePadding;
-            $topMargin = 10;
-            $textHeight = 60;
-            $newHeight = $topMargin + $barcodeHeight + $textHeight;
-            $newImage = imagecreatetruecolor($imageWidth, $newHeight);
-            $white = imagecolorallocate($newImage, 255, 255, 255);
-            $black = imagecolorallocate($newImage, 0, 0, 0);
-            imagefill($newImage, 0, 0, $white);
-            $barcodeX = (int)(($imageWidth - $barcodeWidth) / 2);
-            imagecopy($newImage, $barcodeResource, $barcodeX, $topMargin, 0, 0, $barcodeWidth, $barcodeHeight);
-            $textY = $topMargin + $barcodeHeight + 5;
-            foreach ($textLines as $text) {
-                $textPixelWidth = $fontWidth * strlen($text);
-                $textX = (int)(($imageWidth - $textPixelWidth) / 2);
-                imagestring($newImage, $fontSize, $textX, $textY, $text, $black);
-                $textY += 15;
-            }
-            if (!file_exists(BASE_DIR . '/barcodes')) {
-                mkdir(BASE_DIR . '/barcodes', 0777, true);
-            }
-            $barcodeFile = BASE_DIR . "/barcodes/$barcode.png";
-            if (!imagepng($newImage, $barcodeFile, 9)) {
-                $error = "Failed to save barcode image.";
-            } else {
                 $data['barcodes'][] = [
                     "barcode" => $barcode,
                     "name" => $name,
@@ -82,9 +51,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     ];
                 }
             }
-            imagedestroy($barcodeResource);
-            imagedestroy($newImage);
-        }
     }
 }
 ?>
@@ -121,16 +87,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <?php endif; ?>
             <form id="barcodeForm" method="POST">
                 <div class="mb-4">
-                    <label for="name" class="block text-gray-700 mb-2">Name</label>
-                    <input type="text" name="name" id="name" placeholder="Enter your name" required class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <label for="name" class="block text-gray-700 mb-2">Student Name</label>
+                    <input type="text" name="name" id="name" placeholder="Enter student name" required class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
                 <div class="mb-4">
-                    <label for="course" class="block text-gray-700 mb-2">Course</label>
-                    <input type="text" name="course" id="course" placeholder="Enter course" required class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <label for="course" class="block text-gray-700 mb-2">Strand</label>
+                    <input type="text" name="course" id="course" placeholder="Enter strand" required class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
                 <div class="mb-4">
-                    <label for="course_year" class="block text-gray-700 mb-2">Year</label>
-                    <input type="text" name="course_year" id="course_year" placeholder="Enter course year" required class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <label for="course_year" class="block text-gray-700 mb-2">Year Level</label>
+                    <input type="text" name="course_year" id="course_year" placeholder="Enter year level" required class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
                 <button type="submit" id="submitButton" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 flex items-center justify-center">
                     <span id="buttonText">Generate and Save Barcode</span>

@@ -9,8 +9,8 @@ require_once 'data_helper.php';
 $data = load_data();
 $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
 
-$filter_course = isset($_GET['course']) && $_GET['course'] !== 'All Courses' ? $_GET['course'] : '';
-$filter_course_year = isset($_GET['course_year']) && $_GET['course_year'] !== 'All Years' ? $_GET['course_year'] : '';
+$filter_course = isset($_GET['course']) && $_GET['course'] !== '' ? $_GET['course'] : '';
+$filter_course_year = isset($_GET['course_year']) && $_GET['course_year'] !== '' ? $_GET['course_year'] : '';
 $filter_search = isset($_GET['search']) ? trim($_GET['search']) : '';
 
 $filtered_barcodes = array_filter($barcodes, function($barcode) use ($filter_course, $filter_course_year, $filter_search) {
@@ -190,7 +190,7 @@ sort($course_years);
             <h3 class="text-lg font-semibold text-gray-700 mb-4">Filter Barcodes</h3>
             <form id="filter-form" class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <select name="course" id="filter-course" class="p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="All Courses">All Courses</option>
+                    <option value="">All Strands</option>
                     <?php foreach ($courses as $course): ?>
                         <option value="<?php echo htmlspecialchars($course); ?>" <?php if ($filter_course === $course) echo 'selected'; ?>>
                             <?php echo htmlspecialchars($course); ?>
@@ -198,14 +198,14 @@ sort($course_years);
                     <?php endforeach; ?>
                 </select>
                 <select name="course_year" id="filter-course-year" class="p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="All Years">All Years</option>
+                    <option value="">All Year Levels</option>
                     <?php foreach ($course_years as $year): ?>
                         <option value="<?php echo htmlspecialchars($year); ?>" <?php if ($filter_course_year === $year) echo 'selected'; ?>>
                             <?php echo htmlspecialchars($year); ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
-                <input type="text" name="search" id="filter-search" placeholder="Search by barcode or name" value="<?php echo htmlspecialchars($filter_search); ?>"
+                <input type="text" name="search" id="filter-search" placeholder="Search by barcode or student name" value="<?php echo htmlspecialchars($filter_search); ?>"
                        class="p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
             </form>
         </div>
@@ -217,9 +217,9 @@ sort($course_years);
                 <table class="min-w-full bg-white rounded-lg shadow-md">
                     <thead>
                         <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-                            <th class="py-3 px-6 text-left">Name</th>
-                            <th class="py-3 px-6 text-left">Course</th>
-                            <th class="py-3 px-6 text-left">Year</th>
+                            <th class="py-3 px-6 text-left">Student Name</th>
+                            <th class="py-3 px-6 text-left">Strand</th>
+                            <th class="py-3 px-6 text-left">Year Level</th>
                             <th class="py-3 px-6 text-center">Barcode</th>
                             <th class="py-3 px-6 text-center">Action</th>
                         </tr>
@@ -275,15 +275,15 @@ sort($course_years);
             <form id="edit-barcode-form">
                 <input type="hidden" id="edit-barcode" name="barcode">
                 <div class="mb-4">
-                    <label for="edit-name" class="block text-gray-600">Name</label>
+                    <label for="edit-name" class="block text-gray-600">Student Name</label>
                     <input type="text" id="edit-name" name="name" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                 </div>
                 <div class="mb-4">
-                    <label for="edit-course" class="block text-gray-600">Course</label>
+                    <label for="edit-course" class="block text-gray-600">Strand</label>
                     <input type="text" id="edit-course" name="course" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                 </div>
                 <div class="mb-4">
-                    <label for="edit-course-year" class="block text-gray-600">Course Year</label>
+                    <label for="edit-course-year" class="block text-gray-600">Year Level</label>
                     <input type="text" id="edit-course-year" name="course_year" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                 </div>
                 <div class="flex justify-end space-x-2">
@@ -300,9 +300,9 @@ sort($course_years);
             <button class="close-btn" id="closeBarcodeModal">&times;</button>
             <h3 class="text-xl font-semibold text-gray-700 mb-4">Barcode Details</h3>
             <div id="barcodeDetails">
-                <p><strong>Name:</strong> <span id="modalName"></span></p>
-                <p><strong>Course:</strong> <span id="modalCourse"></span></p>
-                <p><strong>Year:</strong> <span id="modalYear"></span></p>
+                <p><strong>Student Name:</strong> <span id="modalName"></span></p>
+                <p><strong>Strand:</strong> <span id="modalCourse"></span></p>
+                <p><strong>Year Level:</strong> <span id="modalYear"></span></p>
                 <p><strong>Barcode ID:</strong> <span id="modalBarcodeId"></span></p>
             </div>
             <img id="enlargedBarcode" class="enlarged-barcode" src="" alt="Enlarged Barcode">
@@ -494,10 +494,10 @@ sort($course_years);
                     const rowName = row.dataset.name.toLowerCase();
 
                     let matches = true;
-                    if (course !== 'All Courses' && rowCourse !== course) {
+                    if (course && course !== '' && rowCourse !== course) {
                         matches = false;
                     }
-                    if (courseYear !== 'All Years' && rowCourseYear !== courseYear) {
+                    if (courseYear && courseYear !== '' && rowCourseYear !== courseYear) {
                         matches = false;
                     }
                     if (search && !rowBarcode.includes(search) && !rowName.includes(search)) {
@@ -508,8 +508,8 @@ sort($course_years);
                 });
 
                 const params = new URLSearchParams();
-                if (course !== 'All Courses') params.set('course', course);
-                if (courseYear !== 'All Years') params.set('course_year', courseYear);
+                if (course && course !== '') params.set('course', course);
+                if (courseYear && courseYear !== '') params.set('course_year', courseYear);
                 if (search) params.set('search', search);
                 const newUrl = params.toString() ? `${window.location.pathname}?${params.toString()}` : window.location.pathname;
                 history.replaceState(null, '', newUrl);

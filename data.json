@@ -73,6 +73,12 @@
             "name": "dkd",
             "course": "sfs",
             "course_year": "fdfd"
+        },
+        {
+            "barcode": "17586189446794",
+            "name": "Jan Russel Pe\u00f1afiel",
+            "course": "BSIT",
+            "course_year": "4"
         }
     ],
     "attendance": [
@@ -184,6 +190,16 @@
             "date": "2025-09-23",
             "day": "Tuesday",
             "time_in": "16:34:52",
+            "time_out": ""
+        },
+        {
+            "barcode": "17586189446794",
+            "name": "Jan Russel Pe\u00f1afiel",
+            "course": "BSIT",
+            "course_year": "4",
+            "date": "2025-09-23",
+            "day": "Tuesday",
+            "time_in": "17:40:28",
             "time_out": ""
         }
     ]

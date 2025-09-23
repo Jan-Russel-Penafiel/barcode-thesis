@@ -10,9 +10,9 @@ $data = load_data();
 $attendance = isset($data['attendance']) ? $data['attendance'] : [];
 
 // Initialize filter variables
-$filter_course = isset($_GET['course']) && $_GET['course'] !== 'Course' ? $_GET['course'] : '';
-$filter_course_year = isset($_GET['course_year']) && $_GET['course_year'] !== 'Course Year' ? $_GET['course_year'] : '';
-$filter_date = isset($_GET['date']) && $_GET['date'] !== 'Date' ? $_GET['date'] : '';
+$filter_course = isset($_GET['course']) && $_GET['course'] !== '' ? $_GET['course'] : '';
+$filter_course_year = isset($_GET['course_year']) && $_GET['course_year'] !== '' ? $_GET['course_year'] : '';
+$filter_date = isset($_GET['date']) && $_GET['date'] !== '' ? $_GET['date'] : '';
 $filter_search = isset($_GET['search']) ? $_GET['search'] : '';
 
 // Filter attendance records (server-side for initial load)
@@ -116,7 +116,7 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
             <h3 class="text-lg font-semibold text-gray-700 mb-4">Filter Attendance</h3>
             <form id="filter-form" class="grid grid-cols-1 sm:grid-cols-4 gap-4">
                 <select name="course" id="filter-course" class="p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="Course">Course</option>
+                    <option value="">Strand</option>
                     <?php foreach (array_unique(array_column($attendance, 'course')) as $course): ?>
                         <option value="<?php echo htmlspecialchars($course); ?>" <?php if ($filter_course === $course) echo 'selected'; ?>>
                             <?php echo htmlspecialchars($course); ?>
@@ -124,7 +124,7 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                     <?php endforeach; ?>
                 </select>
                 <select name="course_year" id="filter-course-year" class="p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="Course Year">Course Year</option>
+                    <option value="">Year Level</option>
                     <?php foreach (array_unique(array_column($attendance, 'course_year')) as $year): ?>
                         <option value="<?php echo htmlspecialchars($year); ?>" <?php if ($filter_course_year === $year) echo 'selected'; ?>>
                             <?php echo htmlspecialchars($year); ?>
@@ -132,14 +132,14 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                     <?php endforeach; ?>
                 </select>
                 <select name="date" id="filter-date" class="p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="Date">Date</option>
+                    <option value="">Date</option>
                     <?php foreach (array_unique(array_map(function($r) { return (new DateTime($r['date']))->format('F j, Y'); }, $attendance)) as $date): ?>
                         <option value="<?php echo htmlspecialchars($date); ?>" <?php if ($filter_date === $date) echo 'selected'; ?>>
                             <?php echo htmlspecialchars($date); ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
-                <input type="text" name="search" id="filter-search" placeholder="Search by name or barcode" value="<?php echo htmlspecialchars($filter_search); ?>"
+                <input type="text" name="search" id="filter-search" placeholder="Search by student name or barcode" value="<?php echo htmlspecialchars($filter_search); ?>"
                        class="p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 col-span-1 sm:col-span-4">
             </form>
         </div>
@@ -154,9 +154,9 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                     <table class="min-w-full bg-white border" id="attendance-table">
                         <thead>
                             <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-                                <th class="py-3 px-6 text-left">Name</th>
-                                <th class="py-3 px-6 text-left">Course</th>
-                                <th class="py-3 px-6 text-left">Year</th>
+                                <th class="py-3 px-6 text-left">Student Name</th>
+                                <th class="py-3 px-6 text-left">Strand</th>
+                                <th class="py-3 px-6 text-left">Year Level</th>
                                 <th class="py-3 px-6 text-left">Date</th>
                                 <th class="py-3 px-6 text-left">Day</th>
                                 <th class="py-3 px-6 text-left">Time In</th>
@@ -276,13 +276,13 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                     const rowBarcode = row.dataset.barcode.toLowerCase();
 
                     let matches = true;
-                    if (course !== 'Course' && rowCourse !== course) {
+                    if (course && course !== '' && rowCourse !== course) {
                         matches = false;
                     }
-                    if (courseYear !== 'Course Year' && rowCourseYear !== courseYear) {
+                    if (courseYear && courseYear !== '' && rowCourseYear !== courseYear) {
                         matches = false;
                     }
-                    if (date !== 'Date' && rowDate !== date) {
+                    if (date && date !== '' && rowDate !== date) {
                         matches = false;
                     }
                     if (search && !rowName.includes(search) && !rowBarcode.includes(search)) {
@@ -293,9 +293,9 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                 });
 
                 const params = new URLSearchParams();
-                if (course !== 'Course') params.set('course', course);
-                if (courseYear !== 'Course Year') params.set('course_year', courseYear);
-                if (date !== 'Date') params.set('date', date);
+                if (course && course !== '') params.set('course', course);
+                if (courseYear && courseYear !== '') params.set('course_year', courseYear);
+                if (date && date !== '') params.set('date', date);
                 if (search) params.set('search', search);
                 const newUrl = params.toString() ? `${window.location.pathname}?${params.toString()}` : window.location.pathname;
                 history.replaceState(null, '', newUrl);
