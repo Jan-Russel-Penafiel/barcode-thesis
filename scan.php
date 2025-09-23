@@ -18,6 +18,7 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Scan Barcode - Barcode Attendance</title>
     <link href="tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .option-box {
             cursor: pointer;
@@ -90,12 +91,50 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
         .barcode-clickable {
             cursor: pointer;
             transition: transform 0.2s;
-            max-width: 200px;
+            max-width: 64px;
             height: auto;
         }
         
         .barcode-clickable:hover {
             transform: scale(1.05);
+        }
+        
+        #editModal, #deleteModal, #viewModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 10002;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #editModal .modal-content, #deleteModal .modal-content, #viewModal .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .modal-close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: #666;
+        }
+        
+        .modal-close-btn:hover {
+            color: #000;
         }
         
         .scanner-status {
@@ -176,39 +215,65 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
                     <table class="min-w-full bg-white rounded-lg shadow-md">
                         <thead>
                             <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-                                <th class="py-3 px-6 text-left">Name</th>
-                                <th class="py-3 px-6 text-left">Course</th>
-                                <th class="py-3 px-6 text-left">Year</th>
                                 <th class="py-3 px-6 text-center">Barcode</th>
-                                <th class="py-3 px-6 text-center">Quick Scan</th>
+                                <th class="py-3 px-6 text-center">Name</th>
+                                <th class="py-3 px-6 text-center">Course</th>
+                                <th class="py-3 px-6 text-center">Year</th>
+                                <th class="py-3 px-6 text-center">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="text-gray-600 text-sm">
                             <?php foreach ($barcodes as $barcode): ?>
                                 <tr class="border-b border-gray-200 hover:bg-gray-100">
-                                    <td class="py-3 px-6"><?php echo htmlspecialchars($barcode['name']); ?></td>
-                                    <td class="py-3 px-6"><?php echo htmlspecialchars($barcode['course']); ?></td>
-                                    <td class="py-3 px-6"><?php echo htmlspecialchars($barcode['course_year']); ?></td>
                                     <td class="py-3 px-6 text-center">
                                         <?php
                                         $barcodeFile = "barcodes/{$barcode['barcode']}.png";
                                         if (file_exists($barcodeFile)):
                                         ?>
-                                            <img src="<?php echo $barcodeFile; ?>" alt="Barcode" class="mx-auto barcode-clickable"
+                                            <img src="<?php echo $barcodeFile; ?>" alt="Barcode" class="mx-auto barcode-clickable w-16 h-auto"
                                                  data-barcode-src="<?php echo $barcodeFile; ?>"
                                                  data-barcode-id="<?php echo htmlspecialchars($barcode['barcode']); ?>"
                                                  data-barcode-name="<?php echo htmlspecialchars($barcode['name']); ?>"
                                                  data-barcode-course="<?php echo htmlspecialchars($barcode['course']); ?>"
                                                  data-barcode-year="<?php echo htmlspecialchars($barcode['course_year']); ?>">
                                         <?php else: ?>
-                                            <span class="text-red-500">Barcode image not found</span>
+                                            <span class="text-red-500 text-xs">Not found</span>
                                         <?php endif; ?>
                                     </td>
+                                    <td class="py-3 px-6 text-center"><?php echo htmlspecialchars($barcode['name']); ?></td>
+                                    <td class="py-3 px-6 text-center"><?php echo htmlspecialchars($barcode['course']); ?></td>
+                                    <td class="py-3 px-6 text-center"><?php echo htmlspecialchars($barcode['course_year']); ?></td>
                                     <td class="py-3 px-6 text-center">
-                                        <button class="quick-scan-btn bg-blue-500 text-white px-3 py-1 rounded text-xs hover:bg-blue-600"
-                                                data-barcode="<?php echo htmlspecialchars($barcode['barcode']); ?>">
-                                            Quick Scan
-                                        </button>
+                                        <div class="flex justify-center space-x-2">
+                                            <button class="view-btn bg-blue-500 text-white p-2 rounded text-xs hover:bg-blue-600 flex items-center justify-center"
+                                                    data-barcode="<?php echo htmlspecialchars($barcode['barcode']); ?>"
+                                                    data-name="<?php echo htmlspecialchars($barcode['name']); ?>"
+                                                    data-course="<?php echo htmlspecialchars($barcode['course']); ?>"
+                                                    data-year="<?php echo htmlspecialchars($barcode['course_year']); ?>"
+                                                    data-barcode-src="<?php echo $barcodeFile; ?>"
+                                                    title="View Barcode">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="edit-btn bg-green-500 text-white p-2 rounded text-xs hover:bg-green-600 flex items-center justify-center"
+                                                    data-barcode="<?php echo htmlspecialchars($barcode['barcode']); ?>"
+                                                    data-name="<?php echo htmlspecialchars($barcode['name']); ?>"
+                                                    data-course="<?php echo htmlspecialchars($barcode['course']); ?>"
+                                                    data-year="<?php echo htmlspecialchars($barcode['course_year']); ?>"
+                                                    title="Edit Barcode">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="delete-btn bg-red-500 text-white p-2 rounded text-xs hover:bg-red-600 flex items-center justify-center"
+                                                    data-barcode="<?php echo htmlspecialchars($barcode['barcode']); ?>"
+                                                    data-name="<?php echo htmlspecialchars($barcode['name']); ?>"
+                                                    title="Delete Barcode">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                            <button class="quick-scan-btn bg-purple-600 text-white p-2 rounded text-xs hover:bg-purple-700 flex items-center justify-center"
+                                                    data-barcode="<?php echo htmlspecialchars($barcode['barcode']); ?>"
+                                                    title="Quick Scan">
+                                                <i class="fas fa-qrcode"></i>
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -216,6 +281,59 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
                     </table>
                 </div>
             <?php endif; ?>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal">
+        <div class="modal-content">
+            <button class="modal-close-btn" id="closeEditModal">&times;</button>
+            <h3 class="text-xl font-semibold text-gray-700 mb-6">Edit Barcode Details</h3>
+            <form id="editForm" class="space-y-4">
+                <input type="hidden" id="editBarcodeId" name="barcode">
+                <div class="text-left">
+                    <label for="editName" class="block text-sm font-medium text-gray-700 mb-1">Name:</label>
+                    <input type="text" id="editName" name="name" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div class="text-left">
+                    <label for="editCourse" class="block text-sm font-medium text-gray-700 mb-1">Course:</label>
+                    <input type="text" id="editCourse" name="course" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div class="text-left">
+                    <label for="editYear" class="block text-sm font-medium text-gray-700 mb-1">Year:</label>
+                    <input type="text" id="editYear" name="course_year" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div class="flex justify-center space-x-4 mt-6">
+                    <button type="button" id="cancelEdit" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Cancel</button>
+                    <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal">
+        <div class="modal-content">
+            <button class="modal-close-btn" id="closeDeleteModal">&times;</button>
+            <h3 class="text-xl font-semibold text-gray-700 mb-4">Confirm Delete</h3>
+            <p class="text-gray-600 mb-6">Are you sure you want to delete the barcode for <strong id="deleteName"></strong>?</p>
+            <p class="text-sm text-red-500 mb-6">This action cannot be undone.</p>
+            <div class="flex justify-center space-x-4">
+                <button id="cancelDelete" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Cancel</button>
+                <button id="confirmDelete" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Modal -->
+    <div id="viewModal">
+        <div class="modal-content">
+            <button class="modal-close-btn" id="closeViewModal">&times;</button>
+            <img id="viewBarcodeImage" class="mx-auto mb-4 border rounded" style="max-width: 600px; width: 100%; height: auto;" src="" alt="Barcode">
+            <div class="flex justify-center space-x-4">
+                <button id="scanFromView" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Scan This Barcode</button>
+                <button id="closeViewModalBtn" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Close</button>
+            </div>
         </div>
     </div>
 
@@ -258,6 +376,34 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
             const enlargedBarcode = document.getElementById('enlargedBarcode');
             const scannerStatus = document.getElementById('scannerStatus');
             const scanFromModal = document.getElementById('scanFromModal');
+            
+            // New modal elements
+            const editModal = document.getElementById('editModal');
+            const deleteModal = document.getElementById('deleteModal');
+            const viewModal = document.getElementById('viewModal');
+            const editForm = document.getElementById('editForm');
+            
+            // Edit modal elements
+            const closeEditModal = document.getElementById('closeEditModal');
+            const cancelEdit = document.getElementById('cancelEdit');
+            const editBarcodeId = document.getElementById('editBarcodeId');
+            const editName = document.getElementById('editName');
+            const editCourse = document.getElementById('editCourse');
+            const editYear = document.getElementById('editYear');
+            
+            // Delete modal elements
+            const closeDeleteModal = document.getElementById('closeDeleteModal');
+            const deleteName = document.getElementById('deleteName');
+            const cancelDelete = document.getElementById('cancelDelete');
+            const confirmDelete = document.getElementById('confirmDelete');
+            
+            // View modal elements
+            const closeViewModal = document.getElementById('closeViewModal');
+            const closeViewModalBtn = document.getElementById('closeViewModalBtn');
+            const scanFromView = document.getElementById('scanFromView');
+            
+            let currentDeleteBarcode = '';
+            let currentViewBarcode = '';
 
             // Scanner state management
             let scannerBuffer = '';
@@ -391,6 +537,72 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
                 }
             });
 
+            // Modal functions
+            function openEditModal(barcodeId, name, course, year) {
+                editBarcodeId.value = barcodeId;
+                editName.value = name;
+                editCourse.value = course;
+                editYear.value = year;
+                editModal.style.display = 'flex';
+            }
+            
+            function closeEditModalFunc() {
+                editModal.style.display = 'none';
+                editForm.reset();
+            }
+            
+            function openDeleteModal(barcodeId, name) {
+                currentDeleteBarcode = barcodeId;
+                deleteName.textContent = name;
+                deleteModal.style.display = 'flex';
+            }
+            
+            function closeDeleteModalFunc() {
+                deleteModal.style.display = 'none';
+                currentDeleteBarcode = '';
+            }
+            
+            function openViewModal(barcodeId, name, course, year, barcodeSrc) {
+                currentViewBarcode = barcodeId;
+                document.getElementById('viewBarcodeImage').src = barcodeSrc;
+                viewModal.style.display = 'flex';
+            }
+            
+            function closeViewModalFunc() {
+                viewModal.style.display = 'none';
+                currentViewBarcode = '';
+            }
+            
+            // Action button event listeners
+            document.querySelectorAll('.view-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    const barcodeId = button.dataset.barcode;
+                    const name = button.dataset.name;
+                    const course = button.dataset.course;
+                    const year = button.dataset.year;
+                    const barcodeSrc = button.dataset.barcodeSrc;
+                    openViewModal(barcodeId, name, course, year, barcodeSrc);
+                });
+            });
+            
+            document.querySelectorAll('.edit-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    const barcodeId = button.dataset.barcode;
+                    const name = button.dataset.name;
+                    const course = button.dataset.course;
+                    const year = button.dataset.year;
+                    openEditModal(barcodeId, name, course, year);
+                });
+            });
+            
+            document.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    const barcodeId = button.dataset.barcode;
+                    const name = button.dataset.name;
+                    openDeleteModal(barcodeId, name);
+                });
+            });
+            
             // Quick scan buttons
             document.querySelectorAll('.quick-scan-btn').forEach(button => {
                 button.addEventListener('click', () => {
@@ -398,6 +610,94 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
                     barcodeInput.value = barcode;
                     form.dispatchEvent(new Event('submit'));
                 });
+            });
+            
+            // Modal close event listeners
+            closeEditModal.addEventListener('click', closeEditModalFunc);
+            cancelEdit.addEventListener('click', closeEditModalFunc);
+            closeDeleteModal.addEventListener('click', closeDeleteModalFunc);
+            cancelDelete.addEventListener('click', closeDeleteModalFunc);
+            closeViewModal.addEventListener('click', closeViewModalFunc);
+            closeViewModalBtn.addEventListener('click', closeViewModalFunc);
+            
+            // Scan from view modal
+            scanFromView.addEventListener('click', () => {
+                if (currentViewBarcode) {
+                    barcodeInput.value = currentViewBarcode;
+                    closeViewModalFunc();
+                    form.dispatchEvent(new Event('submit'));
+                }
+            });
+            
+            // Close modals when clicking outside
+            editModal.addEventListener('click', (e) => {
+                if (e.target === editModal) closeEditModalFunc();
+            });
+            deleteModal.addEventListener('click', (e) => {
+                if (e.target === deleteModal) closeDeleteModalFunc();
+            });
+            viewModal.addEventListener('click', (e) => {
+                if (e.target === viewModal) closeViewModalFunc();
+            });
+            
+            // Edit form submission
+            editForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(editForm);
+                
+                try {
+                    const response = await fetch('edit_barcode.php', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        messageDiv.className = 'text-green-500';
+                        messageDiv.textContent = 'Barcode updated successfully!';
+                        closeEditModalFunc();
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000);
+                    } else {
+                        messageDiv.className = 'text-red-500';
+                        messageDiv.textContent = result.message || 'Failed to update barcode';
+                    }
+                } catch (error) {
+                    messageDiv.className = 'text-red-500';
+                    messageDiv.textContent = 'Network error occurred';
+                }
+            });
+            
+            // Delete confirmation
+            confirmDelete.addEventListener('click', async () => {
+                if (!currentDeleteBarcode) return;
+                
+                try {
+                    const response = await fetch('delete_barcode.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: `barcode=${encodeURIComponent(currentDeleteBarcode)}`
+                    });
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        messageDiv.className = 'text-green-500';
+                        messageDiv.textContent = 'Barcode deleted successfully!';
+                        closeDeleteModalFunc();
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000);
+                    } else {
+                        messageDiv.className = 'text-red-500';
+                        messageDiv.textContent = result.message || 'Failed to delete barcode';
+                    }
+                } catch (error) {
+                    messageDiv.className = 'text-red-500';
+                    messageDiv.textContent = 'Network error occurred';
+                }
             });
 
             // Handle option box selection

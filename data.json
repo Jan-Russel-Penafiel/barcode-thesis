@@ -52,7 +52,7 @@
         },
         {
             "barcode": "17557635642763",
-            "name": "jona1",
+            "name": "jona1s",
             "course": "bsis",
             "course_year": "2"
         },
@@ -98,7 +98,7 @@
         },
         {
             "barcode": "17557635642763",
-            "name": "jona1",
+            "name": "jona1s",
             "course": "bsis",
             "course_year": "2",
             "date": "2025-08-21",
@@ -108,7 +108,7 @@
         },
         {
             "barcode": "17557635642763",
-            "name": "jona1",
+            "name": "jona1s",
             "course": "bsis",
             "course_year": "2",
             "date": "2025-09-12",
@@ -118,7 +118,7 @@
         },
         {
             "barcode": "17557635642763",
-            "name": "jona1",
+            "name": "jona1s",
             "course": "bsis",
             "course_year": "2",
             "date": "2025-09-17",
@@ -175,6 +175,16 @@
             "day": "Wednesday",
             "time_in": "19:24:26",
             "time_out": "19:24:35"
+        },
+        {
+            "barcode": "17556743189659",
+            "name": "dave",
+            "course": "bisis",
+            "course_year": "2",
+            "date": "2025-09-23",
+            "day": "Tuesday",
+            "time_in": "16:34:52",
+            "time_out": ""
         }
     ]
 }

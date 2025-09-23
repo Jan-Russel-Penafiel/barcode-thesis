@@ -117,7 +117,8 @@ sort($course_years);
             height: auto;
             border: 2px solid #ddd;
             border-radius: 8px;
-            margin: 20px 0;
+            margin: 20px auto;
+            display: block;
         }
         
         #barcodeModal .close-btn {
