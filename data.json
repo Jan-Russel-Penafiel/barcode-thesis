@@ -201,6 +201,16 @@
             "day": "Tuesday",
             "time_in": "17:40:28",
             "time_out": ""
+        },
+        {
+            "barcode": "17586189446794",
+            "name": "Jan Russel Pe\u00f1afiel",
+            "course": "BSIT",
+            "course_year": "4",
+            "date": "2025-09-25",
+            "day": "Thursday",
+            "time_in": "16:45:47",
+            "time_out": ""
         }
     ]
 }

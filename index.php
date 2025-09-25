@@ -91,6 +91,64 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
             margin-bottom: 1rem;
             font-weight: 500;
         }
+        
+        /* Barcode Modal Styles */
+        #barcodeModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 10001;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #barcodeModal .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+            position: relative;
+        }
+        
+        #barcodeModal .enlarged-barcode {
+            max-width: 80%;
+            width: 400px;
+            height: auto;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            margin: 20px auto;
+            display: block;
+        }
+        
+        #barcodeModal .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: #666;
+        }
+        
+        #barcodeModal .close-btn:hover {
+            color: #000;
+        }
+        
+        .barcode-clickable {
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .barcode-clickable:hover {
+            transform: scale(1.05);
+        }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
@@ -154,6 +212,7 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                     <table class="min-w-full bg-white border" id="attendance-table">
                         <thead>
                             <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                                <th class="py-3 px-6 text-center">Barcode</th>
                                 <th class="py-3 px-6 text-left">Student Name</th>
                                 <th class="py-3 px-6 text-left">Strand</th>
                                 <th class="py-3 px-6 text-left">Year Level</th>
@@ -172,6 +231,24 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                                     data-course="<?php echo htmlspecialchars($record['course']); ?>"
                                     data-course-year="<?php echo htmlspecialchars($record['course_year']); ?>"
                                     data-date="<?php echo (new DateTime($record['date']))->format('F j, Y'); ?>">
+                                    <td class="py-3 px-6 text-center">
+                                        <?php
+                                        $barcodeFile = "barcodes/{$record['barcode']}.png";
+                                        if (file_exists($barcodeFile)):
+                                        ?>
+                                            <img src="<?php echo $barcodeFile; ?>" alt="Barcode: <?php echo htmlspecialchars($record['barcode']); ?>" 
+                                                 class="mx-auto max-w-32 h-auto cursor-pointer barcode-clickable"
+                                                 title="Barcode: <?php echo htmlspecialchars($record['barcode']); ?>"
+                                                 data-barcode-src="<?php echo $barcodeFile; ?>"
+                                                 data-barcode-id="<?php echo htmlspecialchars($record['barcode']); ?>"
+                                                 data-barcode-name="<?php echo htmlspecialchars($record['name']); ?>"
+                                                 data-barcode-course="<?php echo htmlspecialchars($record['course']); ?>"
+                                                 data-barcode-year="<?php echo htmlspecialchars($record['course_year']); ?>">
+                                        <?php else: ?>
+                                            <span class="text-red-500 text-xs">Barcode not found</span>
+                                            <br><span class="text-gray-500 text-xs"><?php echo htmlspecialchars($record['barcode']); ?></span>
+                                        <?php endif; ?>
+                                    </td>
                                     <td class="py-3 px-6"><?php echo htmlspecialchars($record['name']); ?></td>
                                     <td class="py-3 px-6"><?php echo htmlspecialchars($record['course']); ?></td>
                                     <td class="py-3 px-6"><?php echo htmlspecialchars($record['course_year']); ?></td>
@@ -236,6 +313,24 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
         </div>
     </div>
 
+    <!-- Barcode Enlargement Modal -->
+    <div id="barcodeModal">
+        <div class="modal-content">
+            <button class="close-btn" id="closeBarcodeModal">&times;</button>
+            <h3 class="text-xl font-semibold text-gray-700 mb-4">Barcode Details</h3>
+            <div id="barcodeDetails">
+                <p><strong>Student Name:</strong> <span id="modalName"></span></p>
+                <p><strong>Strand:</strong> <span id="modalCourse"></span></p>
+                <p><strong>Year Level:</strong> <span id="modalYear"></span></p>
+                <p><strong>Barcode ID:</strong> <span id="modalBarcodeId"></span></p>
+            </div>
+            <img id="enlargedBarcode" class="enlarged-barcode" src="" alt="Enlarged Barcode">
+            <div class="mt-4">
+                <button id="closeBarcodeModalBtn" class="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600">Close</button>
+            </div>
+        </div>
+    </div>
+
     <!-- JavaScript for Automatic Filtering and Deletion -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -253,6 +348,48 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
             const cancelDelete = document.getElementById('cancel-delete');
             const confirmDelete = document.getElementById('confirm-delete');
             const closeError = document.getElementById('close-error');
+
+            // Barcode modal elements
+            const barcodeModal = document.getElementById('barcodeModal');
+            const closeBarcodeModal = document.getElementById('closeBarcodeModal');
+            const closeBarcodeModalBtn = document.getElementById('closeBarcodeModalBtn');
+            const enlargedBarcode = document.getElementById('enlargedBarcode');
+
+            // Barcode modal functionality
+            function openBarcodeModal(imageSrc, barcodeId, name, course, year) {
+                document.getElementById('modalName').textContent = name;
+                document.getElementById('modalCourse').textContent = course;
+                document.getElementById('modalYear').textContent = year;
+                document.getElementById('modalBarcodeId').textContent = barcodeId;
+                enlargedBarcode.src = imageSrc;
+                barcodeModal.style.display = 'flex';
+            }
+
+            function closeBarcodeModalFunc() {
+                barcodeModal.style.display = 'none';
+            }
+
+            // Event listeners for barcode modal
+            document.addEventListener('click', (e) => {
+                if (e.target.classList.contains('barcode-clickable')) {
+                    const src = e.target.dataset.barcodeSrc;
+                    const id = e.target.dataset.barcodeId;
+                    const name = e.target.dataset.barcodeName;
+                    const course = e.target.dataset.barcodeCourse;
+                    const year = e.target.dataset.barcodeYear;
+                    openBarcodeModal(src, id, name, course, year);
+                }
+            });
+
+            closeBarcodeModal.addEventListener('click', closeBarcodeModalFunc);
+            closeBarcodeModalBtn.addEventListener('click', closeBarcodeModalFunc);
+
+            // Close modal when clicking outside
+            barcodeModal.addEventListener('click', (e) => {
+                if (e.target === barcodeModal) {
+                    closeBarcodeModalFunc();
+                }
+            });
 
             function showError(message) {
                 errorMessage.textContent = message;
