@@ -48,6 +48,7 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Barcode Attendance</title>
     <link href="tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         #deleteModal, #errorModal {
             display: none;
@@ -148,6 +149,246 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
         
         .barcode-clickable:hover {
             transform: scale(1.05);
+        }
+
+        /* View and Edit Modal Styles */
+        #viewModal, #editModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 10002;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #viewModal .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            width: 85%;
+            max-width: 480px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        #editModal .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 95%;
+            max-width: 800px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h3 {
+            color: #374151;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #4b5563;
+        }
+
+        .detail-value {
+            color: #1f2937;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 640px) {
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 12px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #374151;
+            flex-shrink: 0;
+            width: 100px;
+        }
+
+        .detail-value {
+            color: #6b7280;
+            text-align: right;
+            flex-grow: 1;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 18px;
+            color: #111827;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .view-barcode-container {
+            text-align: center;
+            margin: 15px 0;
+            padding: 15px;
+            background: #f9fafb;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .view-barcode-image {
+            max-width: 280px;
+            height: auto;
+            margin: 8px 0;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            display: block;
+        }
+
+        .barcode-id {
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: #6b7280;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+
+        /* Action Button Styles */
+        .action-btn {
+            padding: 8px 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 36px;
+            height: 36px;
+            position: relative;
+            text-decoration: none;
+        }
+
+        .action-btn i {
+            pointer-events: none;
+            width: 14px;
+            height: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .action-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-view {
+            background-color: #3b82f6;
+            color: white;
+        }
+
+        .btn-view:hover {
+            background-color: #2563eb;
+        }
+
+        .btn-edit {
+            background-color: #10b981;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background-color: #059669;
+        }
+
+        .btn-delete {
+            background-color: #ef4444;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background-color: #dc2626;
+        }
+
+        .barcode-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
     </style>
 </head>
@@ -280,11 +521,38 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                                         ?>
                                     </td>
                                     <td class="py-3 px-6">
-                                        <button class="delete-attendance bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
-                                                data-barcode="<?php echo htmlspecialchars($record['barcode']); ?>"
-                                                data-date="<?php echo htmlspecialchars($record['date']); ?>">
-                                            Delete
-                                        </button>
+                                        <div class="flex space-x-2">
+                                            <button class="view-attendance action-btn btn-view"
+                                                    data-barcode="<?php echo htmlspecialchars($record['barcode']); ?>"
+                                                    data-name="<?php echo htmlspecialchars($record['name']); ?>"
+                                                    data-course="<?php echo htmlspecialchars($record['course']); ?>"
+                                                    data-course-year="<?php echo htmlspecialchars($record['course_year']); ?>"
+                                                    data-date="<?php echo htmlspecialchars($record['date']); ?>"
+                                                    data-day="<?php echo htmlspecialchars($record['day']); ?>"
+                                                    data-time-in="<?php echo htmlspecialchars($record['time_in']); ?>"
+                                                    data-time-out="<?php echo htmlspecialchars($record['time_out']); ?>"
+                                                    title="View Details">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="edit-attendance action-btn btn-edit"
+                                                    data-barcode="<?php echo htmlspecialchars($record['barcode']); ?>"
+                                                    data-name="<?php echo htmlspecialchars($record['name']); ?>"
+                                                    data-course="<?php echo htmlspecialchars($record['course']); ?>"
+                                                    data-course-year="<?php echo htmlspecialchars($record['course_year']); ?>"
+                                                    data-date="<?php echo htmlspecialchars($record['date']); ?>"
+                                                    data-day="<?php echo htmlspecialchars($record['day']); ?>"
+                                                    data-time-in="<?php echo htmlspecialchars($record['time_in']); ?>"
+                                                    data-time-out="<?php echo htmlspecialchars($record['time_out']); ?>"
+                                                    title="Edit Record">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="delete-attendance action-btn btn-delete"
+                                                    data-barcode="<?php echo htmlspecialchars($record['barcode']); ?>"
+                                                    data-date="<?php echo htmlspecialchars($record['date']); ?>"
+                                                    title="Delete Record">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -331,6 +599,117 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
         </div>
     </div>
 
+    <!-- View Attendance Modal -->
+    <div id="viewModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Attendance Details</h3>
+            </div>
+            <div id="viewContent">
+                <div class="view-barcode-container">
+                    <img id="viewBarcodeImage" class="view-barcode-image" src="" alt="Student Barcode">
+                    <div class="barcode-id" id="viewBarcodeId"></div>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Name:</span>
+                    <span class="detail-value" id="viewName"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Strand:</span>
+                    <span class="detail-value" id="viewCourse"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Year:</span>
+                    <span class="detail-value" id="viewCourseYear"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Date:</span>
+                    <span class="detail-value" id="viewDate"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Day:</span>
+                    <span class="detail-value" id="viewDay"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Time In:</span>
+                    <span class="detail-value" id="viewTimeIn"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Time Out:</span>
+                    <span class="detail-value" id="viewTimeOut"></span>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button id="closeViewModal" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Attendance Modal -->
+    <div id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Attendance Record</h3>
+            </div>
+            <form id="editForm">
+                <input type="hidden" id="editOriginalBarcode">
+                <input type="hidden" id="editOriginalDate">
+                
+                <!-- Student Information Section -->
+                <div style="margin-bottom: 25px;">
+                    <h4 style="color: #374151; margin-bottom: 15px; font-size: 16px; font-weight: 600; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">Student Information</h4>
+                    
+                    <div class="form-group">
+                        <label for="editBarcode">Barcode ID:</label>
+                        <input type="text" id="editBarcode" readonly class="bg-gray-100">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editName">Student Name:</label>
+                            <input type="text" id="editName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editCourse">Strand:</label>
+                            <input type="text" id="editCourse" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editCourseYear">Year Level:</label>
+                        <input type="text" id="editCourseYear" required>
+                    </div>
+                </div>
+                
+                <!-- Attendance Details Section -->
+                <div style="margin-bottom: 25px;">
+                    <h4 style="color: #374151; margin-bottom: 15px; font-size: 16px; font-weight: 600; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">Attendance Details</h4>
+                    
+                    <div class="form-group">
+                        <label for="editDate">Date:</label>
+                        <input type="date" id="editDate" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editTimeIn">Time In:</label>
+                            <input type="time" id="editTimeIn" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editTimeOut">Time Out:</label>
+                            <input type="time" id="editTimeOut">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-buttons">
+                    <button type="button" id="cancelEdit" class="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600">Cancel</button>
+                    <button type="submit" class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- JavaScript for Automatic Filtering and Deletion -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -355,6 +734,15 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
             const closeBarcodeModalBtn = document.getElementById('closeBarcodeModalBtn');
             const enlargedBarcode = document.getElementById('enlargedBarcode');
 
+            // View modal elements
+            const viewModal = document.getElementById('viewModal');
+            const closeViewModal = document.getElementById('closeViewModal');
+
+            // Edit modal elements
+            const editModal = document.getElementById('editModal');
+            const editForm = document.getElementById('editForm');
+            const cancelEdit = document.getElementById('cancelEdit');
+
             // Barcode modal functionality
             function openBarcodeModal(imageSrc, barcodeId, name, course, year) {
                 document.getElementById('modalName').textContent = name;
@@ -367,6 +755,66 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
 
             function closeBarcodeModalFunc() {
                 barcodeModal.style.display = 'none';
+            }
+
+            // View modal functions
+            function openViewModal(data) {
+                // Set barcode image
+                const barcodeImage = document.getElementById('viewBarcodeImage');
+                const barcodeFile = `barcodes/${data.barcode}.png`;
+                barcodeImage.src = barcodeFile;
+                barcodeImage.onerror = function() {
+                    this.style.display = 'none';
+                    document.getElementById('viewBarcodeId').innerHTML = `<span style="color: #ef4444;">Barcode image not found</span><br>${data.barcode}`;
+                };
+                barcodeImage.onload = function() {
+                    this.style.display = 'block';
+                };
+                
+                document.getElementById('viewBarcodeId').textContent = data.barcode;
+                document.getElementById('viewName').textContent = data.name;
+                document.getElementById('viewCourse').textContent = data.course;
+                document.getElementById('viewCourseYear').textContent = data.courseYear;
+                document.getElementById('viewDate').textContent = new Date(data.date).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+                document.getElementById('viewDay').textContent = data.day;
+                document.getElementById('viewTimeIn').textContent = data.timeIn ? new Date('1970-01-01T' + data.timeIn).toLocaleTimeString('en-US', {
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true
+                }) : 'Not recorded';
+                document.getElementById('viewTimeOut').textContent = data.timeOut ? new Date('1970-01-01T' + data.timeOut).toLocaleTimeString('en-US', {
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true
+                }) : 'Not recorded';
+                viewModal.style.display = 'flex';
+            }
+
+            function closeViewModalFunc() {
+                viewModal.style.display = 'none';
+            }
+
+            // Edit modal functions
+            function openEditModal(data) {
+                document.getElementById('editOriginalBarcode').value = data.barcode;
+                document.getElementById('editOriginalDate').value = data.date;
+                document.getElementById('editBarcode').value = data.barcode;
+                document.getElementById('editName').value = data.name;
+                document.getElementById('editCourse').value = data.course;
+                document.getElementById('editCourseYear').value = data.courseYear;
+                document.getElementById('editDate').value = data.date;
+                document.getElementById('editTimeIn').value = data.timeIn ? data.timeIn.substring(0, 5) : '';
+                document.getElementById('editTimeOut').value = data.timeOut ? data.timeOut.substring(0, 5) : '';
+                editModal.style.display = 'flex';
+            }
+
+            function closeEditModalFunc() {
+                editModal.style.display = 'none';
+                editForm.reset();
             }
 
             // Event listeners for barcode modal
@@ -383,11 +831,25 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
 
             closeBarcodeModal.addEventListener('click', closeBarcodeModalFunc);
             closeBarcodeModalBtn.addEventListener('click', closeBarcodeModalFunc);
+            closeViewModal.addEventListener('click', closeViewModalFunc);
+            cancelEdit.addEventListener('click', closeEditModalFunc);
 
-            // Close modal when clicking outside
+            // Close modals when clicking outside
             barcodeModal.addEventListener('click', (e) => {
                 if (e.target === barcodeModal) {
                     closeBarcodeModalFunc();
+                }
+            });
+
+            viewModal.addEventListener('click', (e) => {
+                if (e.target === viewModal) {
+                    closeViewModalFunc();
+                }
+            });
+
+            editModal.addEventListener('click', (e) => {
+                if (e.target === editModal) {
+                    closeEditModalFunc();
                 }
             });
 
@@ -445,7 +907,31 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
             searchInput.addEventListener('input', applyFilters);
 
             table.addEventListener('click', async (e) => {
-                if (e.target.classList.contains('delete-attendance')) {
+                if (e.target.classList.contains('view-attendance')) {
+                    const data = {
+                        barcode: e.target.dataset.barcode,
+                        name: e.target.dataset.name,
+                        course: e.target.dataset.course,
+                        courseYear: e.target.dataset.courseYear,
+                        date: e.target.dataset.date,
+                        day: e.target.dataset.day,
+                        timeIn: e.target.dataset.timeIn,
+                        timeOut: e.target.dataset.timeOut
+                    };
+                    openViewModal(data);
+                } else if (e.target.classList.contains('edit-attendance')) {
+                    const data = {
+                        barcode: e.target.dataset.barcode,
+                        name: e.target.dataset.name,
+                        course: e.target.dataset.course,
+                        courseYear: e.target.dataset.courseYear,
+                        date: e.target.dataset.date,
+                        day: e.target.dataset.day,
+                        timeIn: e.target.dataset.timeIn,
+                        timeOut: e.target.dataset.timeOut
+                    };
+                    openEditModal(data);
+                } else if (e.target.classList.contains('delete-attendance')) {
                     const barcode = e.target.dataset.barcode;
                     const date = e.target.dataset.date;
                     deleteMessage.textContent = `Are you sure you want to delete attendance for barcode ${barcode} on ${date}?`;
@@ -470,6 +956,39 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                             showError('Failed to delete attendance: Network error');
                         }
                     };
+                }
+            });
+
+            // Edit form submission
+            editForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const formData = new FormData();
+                formData.append('original_barcode', document.getElementById('editOriginalBarcode').value);
+                formData.append('original_date', document.getElementById('editOriginalDate').value);
+                formData.append('name', document.getElementById('editName').value);
+                formData.append('course', document.getElementById('editCourse').value);
+                formData.append('course_year', document.getElementById('editCourseYear').value);
+                formData.append('date', document.getElementById('editDate').value);
+                formData.append('time_in', document.getElementById('editTimeIn').value);
+                formData.append('time_out', document.getElementById('editTimeOut').value);
+
+                try {
+                    const response = await fetch('edit_attendance.php', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        closeEditModalFunc();
+                        // Reload the page to show updated data
+                        window.location.reload();
+                    } else {
+                        showError(`Error: ${result.error}`);
+                    }
+                } catch (error) {
+                    showError('Failed to update attendance: Network error');
                 }
             });
 

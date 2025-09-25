@@ -85,12 +85,12 @@
         {
             "barcode": "17556743189659",
             "name": "dave",
-            "course": "bisis",
+            "course": "bisissss",
             "course_year": "2",
             "date": "2025-08-20",
             "day": "Wednesday",
-            "time_in": "15:18:55",
-            "time_out": "15:19:01"
+            "time_in": "15:18",
+            "time_out": "15:19"
         },
         {
             "barcode": "17557402804336",
@@ -210,6 +210,16 @@
             "date": "2025-09-25",
             "day": "Thursday",
             "time_in": "16:45:47",
+            "time_out": ""
+        },
+        {
+            "barcode": "17556743189659",
+            "name": "dave",
+            "course": "bisis",
+            "course_year": "2",
+            "date": "2025-09-25",
+            "day": "Thursday",
+            "time_in": "16:51:10",
             "time_out": ""
         }
     ]
