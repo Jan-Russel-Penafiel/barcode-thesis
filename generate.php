@@ -4,6 +4,10 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     header("Location: login.php");
     exit();
 }
+
+// Set timezone to Philippines
+date_default_timezone_set('Asia/Manila');
+
 if (!file_exists('vendor/autoload.php')) {
     die('Error: Composer autoloader not found. Run "composer install".');
 }
@@ -23,7 +27,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $data = load_data();
         $barcode = time() . rand(1000, 9999);
         $generator = new BarcodeGeneratorPNG();
-        $barcodeImage = $generator->getBarcode($barcode, $generator::TYPE_CODE_128, 2, 50);
+        // Optimized settings for GOOJPRT physical barcode scanner
+        // Increased width factor (4) and height (120) for better scanner readability
+        $barcodeImage = $generator->getBarcode($barcode, $generator::TYPE_CODE_128, 4, 120, [0, 0, 0]);
         
         if (!file_exists(BASE_DIR . '/barcodes')) {
             mkdir(BASE_DIR . '/barcodes', 0777, true);
@@ -38,10 +44,44 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     "course" => $course,
                     "course_year" => $course_year
                 ];
+                
+                // Automatically create an attendance record for today (without time in)
+                $today = date('Y-m-d');
+                $dayName = date('l'); // Full day name (e.g., Monday, Tuesday)
+                
+                // Check if attendance record already exists for this barcode and date
+                $attendanceExists = false;
+                if (isset($data['attendance'])) {
+                    foreach ($data['attendance'] as $record) {
+                        if ($record['barcode'] === $barcode && $record['date'] === $today) {
+                            $attendanceExists = true;
+                            break;
+                        }
+                    }
+                }
+                
+                // Create attendance record if it doesn't exist (without time_in)
+                if (!$attendanceExists) {
+                    if (!isset($data['attendance'])) {
+                        $data['attendance'] = [];
+                    }
+                    
+                    $data['attendance'][] = [
+                        "barcode" => $barcode,
+                        "name" => $name,
+                        "course" => $course,
+                        "course_year" => $course_year,
+                        "date" => $today,
+                        "day" => $dayName,
+                        "time_in" => null,  // Empty - will be filled when they scan
+                        "time_out" => null
+                    ];
+                }
+                
                 if (!save_data($data)) {
                     $error = "Failed to save data to data.json.";
                 } else {
-                    $success = "Barcode $barcode generated and saved.";
+                    $success = "Barcode $barcode generated and saved. Attendance record created for today.";
                     $generated_barcode = [
                         "barcode" => $barcode,
                         "name" => $name,
@@ -111,8 +151,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div id="barcodePopup" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
             <div class="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
                 <h3 class="text-xl font-bold mb-4 text-gray-800">Generated Barcode</h3>
-                <img src="<?php echo htmlspecialchars($generated_barcode['file']); ?>" alt="Generated Barcode" class="mb-4 mx-auto w-full max-w-xs object-contain">
-                <button id="closePopup" class="mt-4 w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Close</button>
+                <div class="mb-4">
+                    <p class="text-sm text-gray-600 mb-2">
+                        <strong>Student:</strong> <?php echo htmlspecialchars($generated_barcode['name']); ?>
+                    </p>
+                    <p class="text-sm text-gray-600 mb-2">
+                        <strong>Strand:</strong> <?php echo htmlspecialchars($generated_barcode['course']); ?>
+                    </p>
+                    <p class="text-sm text-gray-600 mb-4">
+                        <strong>Year:</strong> <?php echo htmlspecialchars($generated_barcode['course_year']); ?>
+                    </p>
+                </div>
+                <img src="<?php echo htmlspecialchars($generated_barcode['file']); ?>" alt="Generated Barcode" class="mb-4 mx-auto w-full max-w-md object-contain" style="min-height: 120px; max-width: 100%; background: white; padding: 20px; border: 2px solid #e2e8f0; border-radius: 8px;">
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+                    <p class="text-sm text-blue-800">
+                        📋 Attendance record created for today
+                    </p>
+                    <p class="text-xs text-blue-600 mt-1">
+                        Scan the barcode to record Time In/Out
+                    </p>
+                </div>
+                <div class="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
+                    <p class="text-sm text-green-800 font-semibold">
+                        📱 GOOJPRT Scanner Ready
+                    </p>
+                    <p class="text-xs text-green-600 mt-1">
+                        Optimized for physical barcode scanners. Hold scanner 4-8 inches from barcode for best results.
+                    </p>
+                </div>
+                <button id="closePopup" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
+                    Close
+                </button>
             </div>
         </div>
         <?php endif; ?>
@@ -139,6 +208,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }, 2000);
         <?php endif; ?>
         const closePopup = document.getElementById('closePopup');
+        
         if (closePopup) {
             closePopup.addEventListener('click', function() {
                 document.getElementById('barcodePopup').remove();

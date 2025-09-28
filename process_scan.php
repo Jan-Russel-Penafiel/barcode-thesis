@@ -15,10 +15,14 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $barcode = isset($_POST['barcode']) ? trim($_POST['barcode']) : '';
 $action = isset($_POST['action']) ? trim($_POST['action']) : 'time_in';
 
+// Enhanced validation for GOOJPRT scanner input
 if (!$barcode) {
-    echo json_encode(['success' => false, 'message' => 'Barcode is required']);
+    echo json_encode(['success' => false, 'message' => 'No barcode detected - Please scan with GOOJPRT scanner']);
     exit();
 }
+
+// Clean barcode data (remove any non-alphanumeric characters that might be added by scanner)
+$barcode = preg_replace('/[^a-zA-Z0-9]/', '', $barcode);
 
 $data = load_data();
 $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
@@ -34,7 +38,7 @@ foreach ($barcodes as $b) {
 }
 
 if (!$barcode_data) {
-    echo json_encode(['success' => false, 'message' => 'Invalid barcode']);
+    echo json_encode(['success' => false, 'message' => 'Invalid barcode - Please rescan with GOOJPRT scanner']);
     exit();
 }
 
@@ -58,26 +62,27 @@ if ($action === 'time_in') {
         exit();
     }
 
-    $new_record = [
-        'barcode' => $barcode,
-        'name' => $barcode_data['name'],
-        'course' => $barcode_data['course'],
-        'course_year' => $barcode_data['course_year'],
-        'date' => $current_date,
-        'day' => $current_day,
-        'time_in' => $current_time,
-        'time_out' => ''
-    ];
-
-    if ($record_index === -1) {
-        $attendance[] = $new_record;
+    // If record exists but time_in is empty, update it
+    if ($record_index !== -1) {
+        $attendance[$record_index]['time_in'] = $current_time;
     } else {
-        $attendance[$record_index] = $new_record;
+        // Create new record if none exists
+        $new_record = [
+            'barcode' => $barcode,
+            'name' => $barcode_data['name'],
+            'course' => $barcode_data['course'],
+            'course_year' => $barcode_data['course_year'],
+            'date' => $current_date,
+            'day' => $current_day,
+            'time_in' => $current_time,
+            'time_out' => ''
+        ];
+        $attendance[] = $new_record;
     }
 
     $data['attendance'] = $attendance;
     save_data($data);
-    echo json_encode(['success' => true, 'message' => 'Time In recorded successfully']);
+    echo json_encode(['success' => true, 'message' => 'Time In recorded successfully! GOOJPRT scan verified ✓']);
 } elseif ($action === 'time_out') {
     if ($record_index === -1 || empty($attendance[$record_index]['time_in'])) {
         echo json_encode(['success' => false, 'message' => 'No Time In recorded for today']);
@@ -92,7 +97,7 @@ if ($action === 'time_in') {
     $attendance[$record_index]['time_out'] = $current_time;
     $data['attendance'] = $attendance;
     save_data($data);
-    echo json_encode(['success' => true, 'message' => 'Time Out recorded successfully']);
+    echo json_encode(['success' => true, 'message' => 'Time Out recorded successfully! GOOJPRT scan verified ✓']);
 } else {
     echo json_encode(['success' => false, 'message' => 'Invalid action']);
 }

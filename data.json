@@ -39,188 +39,130 @@
     ],
     "barcodes": [
         {
-            "barcode": "17556743189659",
+            "barcode": "17588847823194",
             "name": "dave",
-            "course": "bisis",
-            "course_year": "2"
+            "course": "asda",
+            "course_year": "as"
         },
         {
-            "barcode": "17557402804336",
-            "name": "jona",
-            "course": "bsis",
-            "course_year": "2"
+            "barcode": "17588849872803",
+            "name": "jokm",
+            "course": "fds",
+            "course_year": "f"
         },
         {
-            "barcode": "17557635642763",
-            "name": "jona1s",
-            "course": "bsis",
-            "course_year": "2"
+            "barcode": "17588851098789",
+            "name": "ira",
+            "course": "ba",
+            "course_year": "ss"
         },
         {
-            "barcode": "17557639457222",
-            "name": "jona",
-            "course": "bsis",
+            "barcode": "17588852561867",
+            "name": "quenvycy",
+            "course": "asda",
+            "course_year": "asda"
+        },
+        {
+            "barcode": "17588856338564",
+            "name": "dave",
+            "course": "asda",
+            "course_year": "asda"
+        },
+        {
+            "barcode": "17588860664556",
+            "name": "ivy",
+            "course": "asda",
+            "course_year": "da"
+        },
+        {
+            "barcode": "17588873697963",
+            "name": "JONA",
+            "course": "fds",
             "course_year": "3"
         },
         {
-            "barcode": "17575853726900",
-            "name": "jona3",
-            "course": "bsis",
+            "barcode": "17588890866009",
+            "name": "JONA",
+            "course": "bsin",
             "course_year": "3"
         },
         {
-            "barcode": "17575898277771",
-            "name": "dkd",
-            "course": "sfs",
-            "course_year": "fdfd"
-        },
-        {
-            "barcode": "17586189446794",
-            "name": "Jan Russel Pe\u00f1afiel",
-            "course": "BSIT",
-            "course_year": "4"
+            "barcode": "17588907708552",
+            "name": "myrna",
+            "course": "FCCG",
+            "course_year": "SDDD"
         }
     ],
     "attendance": [
         {
-            "barcode": "17556743189659",
+            "barcode": "17588856338564",
             "name": "dave",
-            "course": "bisissss",
-            "course_year": "2",
-            "date": "2025-08-20",
-            "day": "Wednesday",
-            "time_in": "15:18",
-            "time_out": "15:19"
-        },
-        {
-            "barcode": "17557402804336",
-            "name": "jona",
-            "course": "bsis",
-            "course_year": "2",
-            "date": "2025-08-21",
-            "day": "Thursday",
-            "time_in": "09:38:54",
-            "time_out": "09:39:01"
-        },
-        {
-            "barcode": "17557635642763",
-            "name": "jona1s",
-            "course": "bsis",
-            "course_year": "2",
-            "date": "2025-08-21",
-            "day": "Thursday",
-            "time_in": "16:12:01",
-            "time_out": "16:12:12"
-        },
-        {
-            "barcode": "17557635642763",
-            "name": "jona1s",
-            "course": "bsis",
-            "course_year": "2",
-            "date": "2025-09-12",
+            "course": "asda",
+            "course_year": "asda",
+            "date": "2025-09-26",
             "day": "Friday",
-            "time_in": "18:31:16",
-            "time_out": ""
+            "time_in": null,
+            "time_out": null
         },
         {
-            "barcode": "17557635642763",
-            "name": "jona1s",
-            "course": "bsis",
-            "course_year": "2",
-            "date": "2025-09-17",
-            "day": "Wednesday",
-            "time_in": "18:25:26",
-            "time_out": ""
+            "barcode": "17588860664556",
+            "name": "ivy",
+            "course": "asda",
+            "course_year": "da",
+            "date": "2025-09-26",
+            "day": "Friday",
+            "time_in": null,
+            "time_out": null
         },
         {
-            "barcode": "17556743189659",
+            "barcode": "17588847823194",
             "name": "dave",
-            "course": "bisis",
-            "course_year": "2",
-            "date": "2025-09-17",
-            "day": "Wednesday",
-            "time_in": "18:46:09",
-            "time_out": "18:47:51"
+            "course": "asda",
+            "course_year": "as",
+            "date": "2025-09-26",
+            "day": "Friday",
+            "time_in": "19:36:15",
+            "time_out": "19:44:02"
         },
         {
-            "barcode": "17557402804336",
-            "name": "jona",
-            "course": "bsis",
-            "course_year": "2",
-            "date": "2025-09-17",
-            "day": "Wednesday",
-            "time_in": "19:00:29",
+            "barcode": "17588849872803",
+            "name": "jokm",
+            "course": "fds",
+            "course_year": "f",
+            "date": "2025-09-26",
+            "day": "Friday",
+            "time_in": "19:48:06",
             "time_out": ""
         },
         {
-            "barcode": "17557639457222",
-            "name": "jona",
-            "course": "bsis",
+            "barcode": "17588852561867",
+            "name": "quenvycy",
+            "course": "asda",
+            "course_year": "asda",
+            "date": "2025-09-26",
+            "day": "Friday",
+            "time_in": "20:16:35",
+            "time_out": "20:16:50"
+        },
+        {
+            "barcode": "17588890866009",
+            "name": "JONA",
+            "course": "bsin",
             "course_year": "3",
-            "date": "2025-09-17",
-            "day": "Wednesday",
-            "time_in": "19:01:58",
-            "time_out": "19:24:36"
+            "date": "2025-09-26",
+            "day": "Friday",
+            "time_in": "20:18:28",
+            "time_out": "20:18:38"
         },
         {
-            "barcode": "17575853726900",
-            "name": "jona3",
-            "course": "bsis",
-            "course_year": "3",
-            "date": "2025-09-17",
-            "day": "Wednesday",
-            "time_in": "19:05:47",
-            "time_out": ""
-        },
-        {
-            "barcode": "17575898277771",
-            "name": "dkd",
-            "course": "sfs",
-            "course_year": "fdfd",
-            "date": "2025-09-17",
-            "day": "Wednesday",
-            "time_in": "19:24:26",
-            "time_out": "19:24:35"
-        },
-        {
-            "barcode": "17556743189659",
-            "name": "dave",
-            "course": "bisis",
-            "course_year": "2",
-            "date": "2025-09-23",
-            "day": "Tuesday",
-            "time_in": "16:34:52",
-            "time_out": ""
-        },
-        {
-            "barcode": "17586189446794",
-            "name": "Jan Russel Pe\u00f1afiel",
-            "course": "BSIT",
-            "course_year": "4",
-            "date": "2025-09-23",
-            "day": "Tuesday",
-            "time_in": "17:40:28",
-            "time_out": ""
-        },
-        {
-            "barcode": "17586189446794",
-            "name": "Jan Russel Pe\u00f1afiel",
-            "course": "BSIT",
-            "course_year": "4",
-            "date": "2025-09-25",
-            "day": "Thursday",
-            "time_in": "16:45:47",
-            "time_out": ""
-        },
-        {
-            "barcode": "17556743189659",
-            "name": "dave",
-            "course": "bisis",
-            "course_year": "2",
-            "date": "2025-09-25",
-            "day": "Thursday",
-            "time_in": "16:51:10",
-            "time_out": ""
+            "barcode": "17588907708552",
+            "name": "myrna",
+            "course": "FCCG",
+            "course_year": "SDDD",
+            "date": "2025-09-26",
+            "day": "Friday",
+            "time_in": null,
+            "time_out": null
         }
     ]
 }

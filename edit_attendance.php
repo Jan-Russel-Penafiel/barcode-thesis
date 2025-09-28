@@ -6,6 +6,9 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     exit();
 }
 
+// Set timezone to Philippines
+date_default_timezone_set('Asia/Manila');
+
 require_once 'data_helper.php';
 
 header('Content-Type: application/json');

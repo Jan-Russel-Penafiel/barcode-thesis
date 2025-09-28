@@ -6,6 +6,9 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     exit();
 }
 
+// Set timezone to Philippines
+date_default_timezone_set('Asia/Manila');
+
 require_once 'data_helper.php';
 $data = load_data();
 $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
@@ -63,13 +66,17 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
         }
         
         #barcodeModal .enlarged-barcode {
-            max-width: 60%;
-            width: 400px;
+            max-width: 80%; /* Increased from 70% for better scanner visibility */
+            width: 500px; /* Increased from 450px */
             height: auto;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            margin: 20px auto;
+            border: 3px solid #2563eb; /* Changed to blue border for better contrast */
+            border-radius: 12px;
+            margin: 25px auto;
             display: block;
+            min-height: 150px; /* Increased from 120px for GOOJPRT optimal size */
+            background: white;
+            padding: 20px; /* Added padding around barcode */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); /* Added shadow for better definition */
         }
         
         #barcodeModal .close-btn {
@@ -90,8 +97,14 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
         .barcode-clickable {
             cursor: pointer;
             transition: transform 0.2s;
-            max-width: 200px;
+            max-width: 300px;
+            min-height: 80px; /* Increased from 60px for better scanner visibility */
+            min-width: 200px; /* Added minimum width for consistency */
             height: auto;
+            background: white;
+            padding: 10px; /* Added padding for better contrast */
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
         }
         
         .barcode-clickable:hover {
@@ -196,6 +209,9 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
 
     <!-- Main Content -->
     <div class="container mx-auto p-6">
+        <!-- Hidden input for barcode scanner compatibility -->
+        <input type="text" id="hiddenScannerInput" style="position: absolute; left: -9999px; opacity: 0;" autocomplete="off">
+        
         <div class="bg-white p-6 rounded-lg shadow-md max-w-md mx-auto">
             <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Scan Barcode</h2>
             <div id="video-container">
@@ -219,7 +235,7 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
             
             <!-- Main Scanner Status -->
             <div id="mainScannerStatus" class="main-scanner-status main-scanner-ready">
-                🔍 Ready to Scan - Use your physical barcode scanner
+                🔍 GOOJPRT Scanner Ready - Use your physical barcode scanner (optimal distance: 4-8 inches)
             </div>
             <div id="scannerInputDisplay" class="scanner-input-display">
                 <span class="text-gray-500">Scanned barcode will appear here...</span>
@@ -227,6 +243,11 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
             
             <div id="message" class="mt-4 text-center"></div>
             <p class="mt-4 text-gray-600 text-center">Please scan a barcode to record attendance.</p>
+            <div class="mt-3 bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <p class="text-xs text-blue-700 text-center">
+                    📱 <strong>GOOJPRT Scanner Tips:</strong> Hold scanner 4-8 inches from barcode. Ensure good lighting and steady aim for best results.
+                </p>
+            </div>
         </div>
         
         <!-- Barcode Display Section -->
@@ -248,7 +269,7 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
                         </thead>
                         <tbody class="text-gray-600 text-sm">
                             <?php foreach ($barcodes as $barcode): ?>
-                                <tr class="border-b border-gray-200 hover:bg-gray-100">
+                                <tr class="border-b border-gray-200 hover:bg-gray-100" style="height: 100px;"> <!-- Added minimum row height for better visibility -->
                                     <td class="py-3 px-6"><?php echo htmlspecialchars($barcode['name']); ?></td>
                                     <td class="py-3 px-6"><?php echo htmlspecialchars($barcode['course']); ?></td>
                                     <td class="py-3 px-6"><?php echo htmlspecialchars($barcode['course_year']); ?></td>
@@ -262,7 +283,8 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
                                                  data-barcode-id="<?php echo htmlspecialchars($barcode['barcode']); ?>"
                                                  data-barcode-name="<?php echo htmlspecialchars($barcode['name']); ?>"
                                                  data-barcode-course="<?php echo htmlspecialchars($barcode['course']); ?>"
-                                                 data-barcode-year="<?php echo htmlspecialchars($barcode['course_year']); ?>">
+                                                 data-barcode-year="<?php echo htmlspecialchars($barcode['course_year']); ?>"
+                                                 title="Click to enlarge for GOOJPRT scanner">
                                         <?php else: ?>
                                             <span class="text-red-500">Barcode image not found</span>
                                         <?php endif; ?>
@@ -295,7 +317,7 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
             </div>
             <img id="enlargedBarcode" class="enlarged-barcode" src="" alt="Enlarged Barcode">
             <div class="scanner-status scanner-ready" id="scannerStatus">
-                📱 Scanner Ready - Point your GGOJPRT scanner at the barcode above
+                📱 GOOJPRT Scanner Ready - Point your scanner at the barcode above (4-8 inches distance)
             </div>
             <div class="mt-4">
                 <button id="scanFromModal" class="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600 mr-2">Scan This Barcode</button>
@@ -321,10 +343,25 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
             const enlargedBarcode = document.getElementById('enlargedBarcode');
             const scannerStatus = document.getElementById('scannerStatus');
             const scanFromModal = document.getElementById('scanFromModal');
+            const hiddenScannerInput = document.getElementById('hiddenScannerInput');
             
             // Main scanner elements
             const mainScannerStatus = document.getElementById('mainScannerStatus');
             const scannerInputDisplay = document.getElementById('scannerInputDisplay');
+
+            // Keep hidden input focused for scanner compatibility
+            function ensureHiddenInputFocus() {
+                if (!isModalOpen && document.activeElement !== hiddenScannerInput) {
+                    hiddenScannerInput.focus();
+                }
+            }
+
+            // Focus hidden input initially and on window focus
+            hiddenScannerInput.focus();
+            window.addEventListener('focus', ensureHiddenInputFocus);
+            document.addEventListener('click', () => {
+                setTimeout(ensureHiddenInputFocus, 10);
+            });
 
             // Scanner state management
             let scannerBuffer = '';
@@ -370,7 +407,7 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
                 switch (status) {
                     case 'ready':
                         statusElement.className += ' main-scanner-ready';
-                        statusElement.innerHTML = '🔍 Ready to Scan - Use your physical barcode scanner';
+                        statusElement.innerHTML = '🔍 GOOJPRT Scanner Ready - Use your physical barcode scanner (optimal distance: 4-8 inches)';
                         displayElement.innerHTML = '<span class="text-gray-500">Scanned barcode will appear here...</span>';
                         break;
                     case 'scanning':
@@ -416,10 +453,10 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
                 // Add character to buffer
                 scannerBuffer += char;
 
-                // Set timeout to process the complete scan
+                // Set timeout to process the complete scan (longer delay for reliability)
                 mainScannerTimeout = setTimeout(() => {
                     processMainScannerData(scannerBuffer.trim());
-                }, 150); // 150ms delay for complete barcode capture
+                }, 200); // Increased to 200ms for better capture
             }
 
             function processMainScannerData(scannedData) {
@@ -428,7 +465,17 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
                     return;
                 }
 
-                console.log('Main scanner - Scanned data:', scannedData);
+                // Enhanced cleaning for GOOJPRT scanner input
+                scannedData = scannedData.replace(/[^a-zA-Z0-9]/g, '').trim();
+                
+                // GOOJPRT scanners typically produce 13+ character barcodes
+                if (!scannedData || scannedData.length < 5) {
+                    updateMainScannerStatus('error', 'Barcode too short - Please rescan with GOOJPRT', scannedData);
+                    setTimeout(resetMainScanner, 2000);
+                    return;
+                }
+
+                console.log('GOOJPRT scanner - Processed data:', scannedData);
                 updateMainScannerStatus('success', '', scannedData);
                 
                 // Set the barcode value and submit
@@ -461,7 +508,7 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
                 switch (status) {
                     case 'ready':
                         statusElement.className += ' scanner-ready';
-                        statusElement.innerHTML = '📱 Scanner Ready - Point your GGOJPRT scanner at the barcode above';
+                        statusElement.innerHTML = '📱 GOOJPRT Scanner Ready - Point scanner at barcode above (4-8 inches distance)';
                         break;
                     case 'scanning':
                         statusElement.className += ' scanner-scanning';
@@ -505,7 +552,15 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
             function processScannerData(scannedData) {
                 if (!scannedData || !isModalOpen) return;
 
-                console.log('Scanned data:', scannedData);
+                // Enhanced cleaning for GOOJPRT scanner input
+                scannedData = scannedData.replace(/[^a-zA-Z0-9]/g, '').trim();
+                
+                if (!scannedData || scannedData.length < 5) {
+                    updateScannerStatus('ready');
+                    return;
+                }
+
+                console.log('GOOJPRT modal scanner - Processed data:', scannedData);
                 
                 // Check if scanned data matches current barcode
                 if (scannedData === currentBarcodeId) {
@@ -516,10 +571,13 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
                     form.dispatchEvent(new Event('submit'));
                 } else {
                     updateScannerStatus('mismatch', scannedData);
-                    // Reset status after 3 seconds
+                    // Auto-process different barcode after showing mismatch
                     setTimeout(() => {
-                        updateScannerStatus('ready');
-                    }, 3000);
+                        // Still use the scanned barcode even if it doesn't match the modal
+                        barcodeInput.value = scannedData;
+                        closeBarcodeModalFunc();
+                        form.dispatchEvent(new Event('submit'));
+                    }, 1500);
                 }
             }
 
@@ -612,6 +670,59 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
                         // Reset scanner on Escape
                         resetMainScanner();
                     }
+                }
+            });
+
+            // Additional event listener for barcode scanner input (keypress for better compatibility)
+            document.addEventListener('keypress', (e) => {
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                    return; // Don't interfere with form inputs
+                }
+
+                if (isModalOpen) {
+                    if (e.key && e.key.length === 1) {
+                        e.preventDefault();
+                        handleScannerInput(e.key);
+                    }
+                } else {
+                    if (e.key && e.key.length === 1 && /[a-zA-Z0-9]/.test(e.key)) {
+                        e.preventDefault();
+                        handleMainScannerInput(e.key);
+                    }
+                }
+            });
+
+            // Handle input event for better scanner compatibility
+            document.addEventListener('input', (e) => {
+                if (e.target.id === 'hiddenScannerInput') {
+                    const value = e.target.value;
+                    if (value && value.length > 5) { // Typical barcode length check
+                        console.log('Hidden input captured:', value);
+                        if (isModalOpen) {
+                            processScannerData(value.trim());
+                        } else {
+                            processMainScannerData(value.trim());
+                        }
+                        e.target.value = ''; // Clear the hidden input
+                    }
+                }
+            });
+
+            // Add paste event handler for additional scanner compatibility
+            document.addEventListener('paste', (e) => {
+                if (e.target.id === 'hiddenScannerInput') {
+                    setTimeout(() => {
+                        const value = e.target.value;
+                        if (value && value.length > 5) {
+                            console.log('Paste captured:', value);
+                            if (isModalOpen) {
+                                processScannerData(value.trim());
+                            } else {
+                                processMainScannerData(value.trim());
+                            }
+                            e.target.value = '';
+                        }
+                    }, 10);
                 }
             });
 

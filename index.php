@@ -5,6 +5,9 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     exit();
 }
 
+// Set timezone to Philippines
+date_default_timezone_set('Asia/Manila');
+
 require_once 'data_helper.php';
 $data = load_data();
 $attendance = isset($data['attendance']) ? $data['attendance'] : [];
@@ -486,8 +489,17 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                                                  data-barcode-course="<?php echo htmlspecialchars($record['course']); ?>"
                                                  data-barcode-year="<?php echo htmlspecialchars($record['course_year']); ?>">
                                         <?php else: ?>
-                                            <span class="text-red-500 text-xs">Barcode not found</span>
-                                            <br><span class="text-gray-500 text-xs"><?php echo htmlspecialchars($record['barcode']); ?></span>
+                                            <div class="text-center">
+                                                <span class="text-red-500 text-xs block mb-1">Barcode image missing</span>
+                                                <span class="text-gray-500 text-xs block mb-2"><?php echo htmlspecialchars($record['barcode']); ?></span>
+                                                <button class="regenerate-barcode bg-blue-500 text-white text-xs px-2 py-1 rounded hover:bg-blue-600"
+                                                        data-barcode="<?php echo htmlspecialchars($record['barcode']); ?>"
+                                                        data-name="<?php echo htmlspecialchars($record['name']); ?>"
+                                                        data-course="<?php echo htmlspecialchars($record['course']); ?>"
+                                                        data-course-year="<?php echo htmlspecialchars($record['course_year']); ?>">
+                                                    Regenerate
+                                                </button>
+                                            </div>
                                         <?php endif; ?>
                                     </td>
                                     <td class="py-3 px-6"><?php echo htmlspecialchars($record['name']); ?></td>
@@ -503,8 +515,13 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                                     <td class="py-3 px-6">
                                         <?php
                                         if ($record['time_in']) {
-                                            $time_in = new DateTime($record['time_in']);
-                                            echo $time_in->format('g:i A'); // e.g., 2:30 PM
+                                            // Handle time-only format (H:i:s) by creating from format
+                                            $time_in = DateTime::createFromFormat('H:i:s', $record['time_in']);
+                                            if ($time_in === false) {
+                                                // Fallback: try to parse as full datetime
+                                                $time_in = new DateTime($record['time_in']);
+                                            }
+                                            echo $time_in->format('g:i A'); // e.g., 1:03 PM
                                         } else {
                                             echo '-';
                                         }
@@ -513,8 +530,13 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                                     <td class="py-3 px-6">
                                         <?php
                                         if ($record['time_out']) {
-                                            $time_out = new DateTime($record['time_out']);
-                                            echo $time_out->format('g:i A'); // e.g., 2:45 PM
+                                            // Handle time-only format (H:i:s) by creating from format
+                                            $time_out = DateTime::createFromFormat('H:i:s', $record['time_out']);
+                                            if ($time_out === false) {
+                                                // Fallback: try to parse as full datetime
+                                                $time_out = new DateTime($record['time_out']);
+                                            }
+                                            echo $time_out->format('g:i A'); // e.g., 1:45 PM
                                         } else {
                                             echo '-';
                                         }
@@ -694,10 +716,12 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                         <div class="form-group">
                             <label for="editTimeIn">Time In:</label>
                             <input type="time" id="editTimeIn" required>
+                            <small class="text-gray-500">Use 24-hour format (e.g., 13:30 for 1:30 PM)</small>
                         </div>
                         <div class="form-group">
                             <label for="editTimeOut">Time Out:</label>
                             <input type="time" id="editTimeOut">
+                            <small class="text-gray-500">Use 24-hour format (e.g., 17:45 for 5:45 PM)</small>
                         </div>
                     </div>
                 </div>
@@ -719,7 +743,7 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
             const dateSelect = document.getElementById('filter-date');
             const searchInput = document.getElementById('filter-search');
             const table = document.getElementById('attendance-table');
-            const rows = table.querySelectorAll('tbody tr');
+            const rows = table ? table.querySelectorAll('tbody tr') : [];
             const deleteModal = document.getElementById('deleteModal');
             const errorModal = document.getElementById('errorModal');
             const deleteMessage = document.getElementById('delete-message');
@@ -956,6 +980,42 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                             showError('Failed to delete attendance: Network error');
                         }
                     };
+                } else if (e.target.classList.contains('regenerate-barcode')) {
+                    const button = e.target;
+                    const originalText = button.textContent;
+                    button.disabled = true;
+                    button.textContent = 'Regenerating...';
+                    button.classList.add('opacity-50');
+                    
+                    try {
+                        const formData = new FormData();
+                        formData.append('barcode_id', button.dataset.barcode);
+                        formData.append('name', button.dataset.name);
+                        formData.append('course', button.dataset.course);
+                        formData.append('course_year', button.dataset.courseYear);
+                        
+                        const response = await fetch('regenerate_barcode.php', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (result.success) {
+                            // Reload the page to show the regenerated barcode
+                            location.reload();
+                        } else {
+                            showError(result.message || 'Failed to regenerate barcode');
+                            button.disabled = false;
+                            button.textContent = originalText;
+                            button.classList.remove('opacity-50');
+                        }
+                    } catch (error) {
+                        showError('Network error occurred while regenerating barcode');
+                        button.disabled = false;
+                        button.textContent = originalText;
+                        button.classList.remove('opacity-50');
+                    }
                 }
             });
 
