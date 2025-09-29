@@ -37,6 +37,30 @@
             "password": "$2y$10$CyHJMcg9cHXUuOcvysQ91uYtL5S.hsPxhgsOyNQdCDTJxuAZ8sJM6"
         }
     ],
-    "barcodes": [],
-    "attendance": []
+    "barcodes": [
+        {
+            "barcode": "17591473425713",
+            "name": "JONA",
+            "course": "bsin",
+            "course_year": "1"
+        },
+        {
+            "barcode": "17591480831692",
+            "name": "Jan Russel Pe\u00f1afiel ",
+            "course": "asda",
+            "course_year": "2"
+        }
+    ],
+    "attendance": [
+        {
+            "barcode": "17591480831692",
+            "name": "Jan Russel Pe\u00f1afiel ",
+            "course": "asda",
+            "course_year": "2",
+            "date": "2025-09-29",
+            "day": "Monday",
+            "time_in": "20:14:56",
+            "time_out": "20:15:11"
+        }
+    ]
 }
