@@ -66,17 +66,20 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
         }
         
         #barcodeModal .enlarged-barcode {
-            max-width: 80%; /* Increased from 70% for better scanner visibility */
-            width: 500px; /* Increased from 450px */
+            max-width: 75%; /* Optimized for MP2300 scanner visibility */
+            width: 400px; /* Optimal size for MP2300 */
             height: auto;
-            border: 3px solid #2563eb; /* Changed to blue border for better contrast */
-            border-radius: 12px;
-            margin: 25px auto;
+            border: 2px solid #374151; /* Dark border for better contrast */
+            border-radius: 4px;
+            margin: 20px auto;
             display: block;
-            min-height: 150px; /* Increased from 120px for GOOJPRT optimal size */
+            min-height: 120px; /* Optimal height for MP2300 */
             background: white;
-            padding: 20px; /* Added padding around barcode */
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); /* Added shadow for better definition */
+            padding: 15px; /* Optimal padding for MP2300 */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
         }
         
         #barcodeModal .close-btn {
@@ -97,14 +100,17 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
         .barcode-clickable {
             cursor: pointer;
             transition: transform 0.2s;
-            max-width: 300px;
-            min-height: 80px; /* Increased from 60px for better scanner visibility */
-            min-width: 200px; /* Added minimum width for consistency */
+            max-width: 280px;
+            min-height: 70px; /* Optimized for MP2300 scanner */
+            min-width: 180px; /* Optimal width for MP2300 */
             height: auto;
             background: white;
-            padding: 10px; /* Added padding for better contrast */
-            border: 1px solid #e2e8f0;
-            border-radius: 4px;
+            padding: 8px; /* Reduced padding for better scan area */
+            border: 1px solid #d1d5db;
+            border-radius: 2px;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
         }
         
         .barcode-clickable:hover {
@@ -235,7 +241,7 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
             
             <!-- Main Scanner Status -->
             <div id="mainScannerStatus" class="main-scanner-status main-scanner-ready">
-                🔍 GOOJPRT Scanner Ready - Use your physical barcode scanner (optimal distance: 4-8 inches)
+                🔍 GOOJPRT MP2300 Scanner Ready - Use your physical barcode scanner (optimal distance: 2-6 inches, slight angle)
             </div>
             <div id="scannerInputDisplay" class="scanner-input-display">
                 <span class="text-gray-500">Scanned barcode will appear here...</span>
@@ -245,7 +251,7 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
             <p class="mt-4 text-gray-600 text-center">Please scan a barcode to record attendance.</p>
             <div class="mt-3 bg-blue-50 border border-blue-200 rounded-lg p-3">
                 <p class="text-xs text-blue-700 text-center">
-                    📱 <strong>GOOJPRT Scanner Tips:</strong> Hold scanner 4-8 inches from barcode. Ensure good lighting and steady aim for best results.
+                    💡 MP2300 Tip: Hold scanner at slight angle (15-30°) for better reading. Use 2-6 inches distance for optimal scanning.
                 </p>
             </div>
         </div>
@@ -317,7 +323,7 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
             </div>
             <img id="enlargedBarcode" class="enlarged-barcode" src="" alt="Enlarged Barcode">
             <div class="scanner-status scanner-ready" id="scannerStatus">
-                📱 GOOJPRT Scanner Ready - Point your scanner at the barcode above (4-8 inches distance)
+                📱 GOOJPRT MP2300 Scanner Ready - Point your scanner at the barcode above (2-6 inches distance, slight angle)
             </div>
             <div class="mt-4">
                 <button id="scanFromModal" class="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600 mr-2">Scan This Barcode</button>
@@ -407,7 +413,7 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
                 switch (status) {
                     case 'ready':
                         statusElement.className += ' main-scanner-ready';
-                        statusElement.innerHTML = '🔍 GOOJPRT Scanner Ready - Use your physical barcode scanner (optimal distance: 4-8 inches)';
+                        statusElement.innerHTML = '🔍 GOOJPRT MP2300 Scanner Ready - Use your physical barcode scanner (optimal distance: 2-6 inches, slight angle)';
                         displayElement.innerHTML = '<span class="text-gray-500">Scanned barcode will appear here...</span>';
                         break;
                     case 'scanning':
@@ -453,10 +459,10 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
                 // Add character to buffer
                 scannerBuffer += char;
 
-                // Set timeout to process the complete scan (longer delay for reliability)
+                // Set timeout to process the complete scan (optimized for MP2300)
                 mainScannerTimeout = setTimeout(() => {
                     processMainScannerData(scannerBuffer.trim());
-                }, 200); // Increased to 200ms for better capture
+                }, 150); // Optimized for MP2300 scanner speed
             }
 
             function processMainScannerData(scannedData) {
@@ -465,11 +471,11 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
                     return;
                 }
 
-                // Enhanced cleaning for GOOJPRT scanner input
+                // Enhanced cleaning for GOOJPRT MP2300 scanner input
                 scannedData = scannedData.replace(/[^a-zA-Z0-9]/g, '').trim();
                 
-                // GOOJPRT scanners typically produce 13+ character barcodes
-                if (!scannedData || scannedData.length < 5) {
+                // GOOJPRT MP2300 scanners typically produce 13+ character barcodes
+                if (!scannedData || scannedData.length < 8) {
                     updateMainScannerStatus('error', 'Barcode too short - Please rescan with GOOJPRT', scannedData);
                     setTimeout(resetMainScanner, 2000);
                     return;
@@ -508,7 +514,7 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
                 switch (status) {
                     case 'ready':
                         statusElement.className += ' scanner-ready';
-                        statusElement.innerHTML = '📱 GOOJPRT Scanner Ready - Point scanner at barcode above (4-8 inches distance)';
+                        statusElement.innerHTML = '📱 GOOJPRT MP2300 Scanner Ready - Point scanner at barcode above (2-6 inches distance, slight angle)';
                         break;
                     case 'scanning':
                         statusElement.className += ' scanner-scanning';

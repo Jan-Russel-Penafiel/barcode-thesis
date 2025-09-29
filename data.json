@@ -95,74 +95,14 @@
     ],
     "attendance": [
         {
-            "barcode": "17588856338564",
-            "name": "dave",
-            "course": "asda",
-            "course_year": "asda",
-            "date": "2025-09-26",
-            "day": "Friday",
-            "time_in": null,
-            "time_out": null
-        },
-        {
-            "barcode": "17588860664556",
-            "name": "ivy",
-            "course": "asda",
-            "course_year": "da",
-            "date": "2025-09-26",
-            "day": "Friday",
-            "time_in": null,
-            "time_out": null
-        },
-        {
-            "barcode": "17588847823194",
-            "name": "dave",
-            "course": "asda",
-            "course_year": "as",
-            "date": "2025-09-26",
-            "day": "Friday",
-            "time_in": "19:36:15",
-            "time_out": "19:44:02"
-        },
-        {
-            "barcode": "17588849872803",
-            "name": "jokm",
-            "course": "fds",
-            "course_year": "f",
-            "date": "2025-09-26",
-            "day": "Friday",
-            "time_in": "19:48:06",
-            "time_out": ""
-        },
-        {
             "barcode": "17588852561867",
             "name": "quenvycy",
             "course": "asda",
             "course_year": "asda",
-            "date": "2025-09-26",
-            "day": "Friday",
-            "time_in": "20:16:35",
-            "time_out": "20:16:50"
-        },
-        {
-            "barcode": "17588890866009",
-            "name": "JONA",
-            "course": "bsin",
-            "course_year": "3",
-            "date": "2025-09-26",
-            "day": "Friday",
-            "time_in": "20:18:28",
-            "time_out": "20:18:38"
-        },
-        {
-            "barcode": "17588907708552",
-            "name": "myrna",
-            "course": "FCCG",
-            "course_year": "SDDD",
-            "date": "2025-09-26",
-            "day": "Friday",
-            "time_in": null,
-            "time_out": null
+            "date": "2025-09-29",
+            "day": "Monday",
+            "time_in": "16:49:25",
+            "time_out": "16:49:53"
         }
     ]
 }

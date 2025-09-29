@@ -27,9 +27,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $data = load_data();
         $barcode = time() . rand(1000, 9999);
         $generator = new BarcodeGeneratorPNG();
-        // Optimized settings for GOOJPRT physical barcode scanner
-        // Increased width factor (4) and height (120) for better scanner readability
-        $barcodeImage = $generator->getBarcode($barcode, $generator::TYPE_CODE_128, 4, 120, [0, 0, 0]);
+        // Optimized settings specifically for GOOJPRT MP2300 2D Barcode Scanner
+        // Width factor: 3 (optimal for MP2300), Height: 80 (standard readable height)
+        // Quiet zone padding and high contrast for better scan reliability
+        $barcodeImage = $generator->getBarcode($barcode, $generator::TYPE_CODE_128, 3, 80, [0, 0, 0]);
         
         if (!file_exists(BASE_DIR . '/barcodes')) {
             mkdir(BASE_DIR . '/barcodes', 0777, true);
@@ -162,7 +163,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <strong>Year:</strong> <?php echo htmlspecialchars($generated_barcode['course_year']); ?>
                     </p>
                 </div>
-                <img src="<?php echo htmlspecialchars($generated_barcode['file']); ?>" alt="Generated Barcode" class="mb-4 mx-auto w-full max-w-md object-contain" style="min-height: 120px; max-width: 100%; background: white; padding: 20px; border: 2px solid #e2e8f0; border-radius: 8px;">
+                <img src="<?php echo htmlspecialchars($generated_barcode['file']); ?>" alt="Generated Barcode" class="mb-4 mx-auto w-full max-w-md object-contain" style="min-height: 100px; max-width: 100%; background: white; padding: 15px; border: 1px solid #d1d5db; border-radius: 4px; image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;">
                 <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
                     <p class="text-sm text-blue-800">
                         📋 Attendance record created for today
@@ -173,10 +174,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
                 <div class="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
                     <p class="text-sm text-green-800 font-semibold">
-                        📱 GOOJPRT Scanner Ready
+                        📱 GOOJPRT MP2300 Scanner Ready
                     </p>
                     <p class="text-xs text-green-600 mt-1">
-                        Optimized for physical barcode scanners. Hold scanner 4-8 inches from barcode for best results.
+                        Optimized for GOOJPRT MP2300 2D scanner. Hold scanner 2-6 inches from barcode at slight angle for best results.
                     </p>
                 </div>
                 <button id="closePopup" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
