@@ -253,6 +253,15 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
                 <p class="text-xs text-blue-700 text-center">
                     💡 MP2300 Tip: Hold scanner at slight angle (15-30°) for better reading. Use 2-6 inches distance for optimal scanning.
                 </p>
+                <div class="mt-2 text-center">
+                    <button id="toggleDebug" class="text-xs bg-gray-500 text-white px-2 py-1 rounded hover:bg-gray-600">
+                        Enable Scanner Debug
+                    </button>
+                    <a href="scanner_diagnostic.php" class="text-xs bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 ml-2">
+                        🔧 Open Diagnostic Tool
+                    </a>
+                </div>
+                <div id="debugOutput" class="mt-2 text-xs bg-gray-800 text-green-400 p-2 rounded max-h-32 overflow-y-auto font-mono hidden"></div>
             </div>
         </div>
         
@@ -351,6 +360,28 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
             const scanFromModal = document.getElementById('scanFromModal');
             const hiddenScannerInput = document.getElementById('hiddenScannerInput');
             
+            // Debug logging for scanner troubleshooting
+            const debugMode = localStorage.getItem('scannerDebug') === 'true';
+            
+            function debugLog(message, data = '') {
+                if (debugMode) {
+                    console.log(`[Scanner Debug] ${new Date().toLocaleTimeString()}: ${message}`, data);
+                    
+                    // Optional: Display debug info on page
+                    const debugDiv = document.getElementById('debugOutput');
+                    if (debugDiv) {
+                        debugDiv.innerHTML += `<div>[${new Date().toLocaleTimeString()}] ${message}: ${JSON.stringify(data)}</div>`;
+                        debugDiv.scrollTop = debugDiv.scrollHeight;
+                    }
+                }
+            }
+            
+            debugLog('Scanner system initialized', {
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                timestamp: new Date().toISOString()
+            });
+            
             // Main scanner elements
             const mainScannerStatus = document.getElementById('mainScannerStatus');
             const scannerInputDisplay = document.getElementById('scannerInputDisplay');
@@ -368,6 +399,33 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
             document.addEventListener('click', () => {
                 setTimeout(ensureHiddenInputFocus, 10);
             });
+
+            // Debug toggle functionality
+            const toggleDebugBtn = document.getElementById('toggleDebug');
+            const debugOutput = document.getElementById('debugOutput');
+            
+            toggleDebugBtn.addEventListener('click', () => {
+                const currentDebug = localStorage.getItem('scannerDebug') === 'true';
+                const newDebug = !currentDebug;
+                localStorage.setItem('scannerDebug', newDebug.toString());
+                
+                if (newDebug) {
+                    toggleDebugBtn.textContent = 'Disable Scanner Debug';
+                    toggleDebugBtn.className = 'text-xs bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600';
+                    debugOutput.classList.remove('hidden');
+                    debugLog('Debug mode enabled');
+                } else {
+                    toggleDebugBtn.textContent = 'Enable Scanner Debug';
+                    toggleDebugBtn.className = 'text-xs bg-gray-500 text-white px-2 py-1 rounded hover:bg-gray-600';
+                    debugOutput.classList.add('hidden');
+                    debugOutput.innerHTML = '';
+                }
+            });
+            
+            // Initialize debug state
+            if (localStorage.getItem('scannerDebug') === 'true') {
+                toggleDebugBtn.click();
+            }
 
             // Scanner state management
             let scannerBuffer = '';
@@ -439,9 +497,16 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
                 }
             }
 
-            // Enhanced main scanner input handling
+            // Enhanced main scanner input handling with debugging
             function handleMainScannerInput(char) {
                 if (isModalOpen || isScanning) return;
+
+                debugLog('Scanner input received', {
+                    character: char,
+                    charCode: char.charCodeAt(0),
+                    bufferLength: scannerBuffer.length,
+                    timestamp: Date.now()
+                });
 
                 // Clear previous timeout
                 if (mainScannerTimeout) {
@@ -452,6 +517,7 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
                 if (!scannerBuffer) {
                     isScanning = true;
                     updateMainScannerStatus('scanning', '', char);
+                    debugLog('Started new scan session');
                 } else {
                     updateMainScannerStatus('scanning', '', scannerBuffer + char);
                 }
@@ -461,6 +527,10 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
 
                 // Set timeout to process the complete scan (optimized for MP2300)
                 mainScannerTimeout = setTimeout(() => {
+                    debugLog('Scanner timeout reached, processing data', {
+                        buffer: scannerBuffer,
+                        length: scannerBuffer.length
+                    });
                     processMainScannerData(scannerBuffer.trim());
                 }, 150); // Optimized for MP2300 scanner speed
             }
