@@ -61,6 +61,16 @@
             "day": "Monday",
             "time_in": "20:14:56",
             "time_out": "20:15:11"
+        },
+        {
+            "barcode": "17591473425713",
+            "name": "JONA",
+            "course": "bsin",
+            "course_year": "1",
+            "date": "2025-09-29",
+            "day": "Monday",
+            "time_in": "20:45:33",
+            "time_out": ""
         }
     ]
 }

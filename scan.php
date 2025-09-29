@@ -249,9 +249,15 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
             
             <div id="message" class="mt-4 text-center"></div>
             <p class="mt-4 text-gray-600 text-center">Please scan a barcode to record attendance.</p>
-                <!-- Universal Compatibility Tips removed as requested -->
+            <div class="mt-3 bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <!-- Compatibility tips removed as requested -->
                 <div class="mt-2 text-center">
-                    <!-- Debug and diagnostic buttons removed as requested -->
+                    <button id="toggleDebug" class="text-xs bg-gray-500 text-white px-2 py-1 rounded hover:bg-gray-600">
+                        Enable Scanner Debug
+                    </button>
+                    <a href="scanner_diagnostic.php" class="text-xs bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 ml-2">
+                        🔧 Open Diagnostic Tool
+                    </a>
                 </div>
                 <div id="debugOutput" class="mt-2 text-xs bg-gray-800 text-green-400 p-2 rounded max-h-32 overflow-y-auto font-mono hidden"></div>
             </div>
@@ -323,9 +329,9 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
                 <p><strong>Barcode ID:</strong> <span id="modalBarcodeId"></span></p>
             </div>
             <img id="enlargedBarcode" class="enlarged-barcode" src="" alt="Enlarged Barcode">
-                <div class="scanner-status" id="scannerStatus">
-                    <!-- Scanner status removed as requested -->
-                </div>
+            <div class="scanner-status scanner-ready" id="scannerStatus">
+                📱 GOOJPRT MP2300 Scanner Ready - Point your scanner at the barcode above (2-6 inches distance, slight angle)
+            </div>
             <div class="mt-4">
                 <button id="scanFromModal" class="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600 mr-2">Scan This Barcode</button>
                 <button id="closeBarcodeModalBtn" class="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600">Close</button>
@@ -471,7 +477,7 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
                 switch (status) {
                     case 'ready':
                         statusElement.className += ' main-scanner-ready';
-                        statusElement.innerHTML = '';
+                        statusElement.innerHTML = '🔍 GOOJPRT MP2300 Scanner Ready - Use your physical barcode scanner (optimal distance: 2-6 inches, slight angle)';
                         displayElement.innerHTML = '<span class="text-gray-500">Scanned barcode will appear here...</span>';
                         break;
                     case 'scanning':
@@ -584,7 +590,7 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
                 switch (status) {
                     case 'ready':
                         statusElement.className += ' scanner-ready';
-                        statusElement.innerHTML = '';
+                        statusElement.innerHTML = '📱 GOOJPRT MP2300 Scanner Ready - Point scanner at barcode above (2-6 inches distance, slight angle)';
                         break;
                     case 'scanning':
                         statusElement.className += ' scanner-scanning';
