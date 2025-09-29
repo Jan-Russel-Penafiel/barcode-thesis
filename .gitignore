@@ -1,0 +1,86 @@
+# Executables and binaries
+*.exe
+*.dll
+*.so
+*.dylib
+*.app
+
+# Compressed files
+*.zip
+*.rar
+*.7z
+*.tar.gz
+*.tar
+
+# Dependencies
+node_modules/
+vendor/
+composer.phar
+
+# Build directories
+dist/
+build/
+out/
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files
+.env
+.env.local
+.env.production
+.env.development
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Large media files
+*.mp4
+*.avi
+*.mov
+*.wmv
+*.flv
+*.webm
+
+# Backup files
+*.backup
+*.bak
+*~
+
+# Application specific
+barcodes/*.backup
+data_backups/
+uploads/
+cache/
+
+# XAMPP specific
+error.log
+access.log
