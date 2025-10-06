@@ -12,11 +12,93 @@ require_once 'data_helper.php';
 $data = load_data();
 $attendance = isset($data['attendance']) ? $data['attendance'] : [];
 
+// Store ALL attendance records for history (don't modify the original data)
+$all_attendance_records = $attendance;
+
+// CLEANUP: Remove duplicate attendance records (same barcode + date)
+// Keep only the most complete record per date
+$cleaned_by_date = [];
+$seen_date_records = [];
+
+foreach ($attendance as $record) {
+    $key = $record['barcode'] . '|' . $record['date'];
+    
+    if (!isset($seen_date_records[$key])) {
+        // First occurrence - keep it
+        $seen_date_records[$key] = count($cleaned_by_date);
+        $cleaned_by_date[] = $record;
+    } else {
+        // Duplicate found - merge the data (keep non-empty values)
+        $existing_index = $seen_date_records[$key];
+        
+        // Merge time_in if current record has it and existing doesn't
+        if (empty($cleaned_by_date[$existing_index]['time_in']) && !empty($record['time_in'])) {
+            $cleaned_by_date[$existing_index]['time_in'] = $record['time_in'];
+        }
+        
+        // Merge time_out if current record has it and existing doesn't
+        if (empty($cleaned_by_date[$existing_index]['time_out']) && !empty($record['time_out'])) {
+            $cleaned_by_date[$existing_index]['time_out'] = $record['time_out'];
+        }
+        
+        // Update day if it was empty
+        if (empty($cleaned_by_date[$existing_index]['day']) && !empty($record['day'])) {
+            $cleaned_by_date[$existing_index]['day'] = $record['day'];
+        }
+    }
+}
+
+// For DISPLAY in main table: Show only the LATEST record per student
+// Group by barcode and keep only the most recent date
+$latest_attendance = [];
+$student_latest = [];
+
+foreach ($cleaned_by_date as $record) {
+    $barcode = $record['barcode'];
+    $record_date = strtotime($record['date']);
+    
+    if (!isset($student_latest[$barcode])) {
+        // First record for this student
+        $student_latest[$barcode] = [
+            'index' => count($latest_attendance),
+            'date' => $record_date
+        ];
+        $latest_attendance[] = $record;
+    } else {
+        // Check if this record is more recent
+        if ($record_date > $student_latest[$barcode]['date']) {
+            // Replace with newer record
+            $index = $student_latest[$barcode]['index'];
+            $latest_attendance[$index] = $record;
+            $student_latest[$barcode]['date'] = $record_date;
+        }
+    }
+}
+
+// Use latest_attendance for display, but keep all_attendance_records for history
+$attendance = $latest_attendance;
+
+// Save cleaned data back if duplicates were found
+if (count($cleaned_by_date) < count($data['attendance'])) {
+    $data['attendance'] = $cleaned_by_date;
+    save_data($data);
+}
+
 // Initialize filter variables
 $filter_course = isset($_GET['course']) && $_GET['course'] !== '' ? $_GET['course'] : '';
 $filter_course_year = isset($_GET['course_year']) && $_GET['course_year'] !== '' ? $_GET['course_year'] : '';
 $filter_date = isset($_GET['date']) && $_GET['date'] !== '' ? $_GET['date'] : '';
 $filter_search = isset($_GET['search']) ? $_GET['search'] : '';
+
+// Extract unique strands for filtering
+$strands = [];
+foreach ($attendance as $record) {
+    $strand = isset($record['course']) ? trim($record['course']) : 'Unknown';
+    if (!in_array($strand, $strands)) {
+        $strands[] = $strand;
+    }
+}
+sort($strands);
 
 // Filter attendance records (server-side for initial load)
 $filtered_attendance = array_filter($attendance, function($record) use ($filter_course, $filter_course_year, $filter_date, $filter_search) {
@@ -170,11 +252,11 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
 
         #viewModal .modal-content {
             background: white;
-            padding: 20px;
-            border-radius: 12px;
-            width: 85%;
-            max-width: 480px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            padding: 16px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 420px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
         #editModal .modal-content {
@@ -393,6 +475,128 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
             align-items: center;
             gap: 10px;
         }
+
+        /* Compact Strand filter tabs */
+        .compact-strand-container {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 20px;
+        }
+
+        .compact-strand-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .compact-strand-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        
+        .compact-strand-tab {
+            padding: 6px 14px;
+            border: 1.5px solid #3b82f6;
+            border-radius: 6px;
+            background: white;
+            color: #3b82f6;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 600;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+        
+        .compact-strand-tab:hover {
+            background: #3b82f6;
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+        }
+        
+        .compact-strand-tab.active {
+            background: #3b82f6;
+            color: white;
+            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.4);
+        }
+        
+        .attendance-row {
+            transition: opacity 0.2s ease;
+        }
+        
+        .attendance-row.hidden {
+            display: none;
+        }
+
+        .grade-section {
+            transition: opacity 0.2s ease;
+        }
+        
+        .grade-section.hidden {
+            display: none;
+        }
+
+        /* Modal action boxes for Time In/Time Out */
+        .modal-action-box {
+            transition: all 0.3s ease;
+        }
+        
+        .modal-action-box:hover {
+            background-color: #3b82f6;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+        }
+        
+        .modal-action-box.selected {
+            background-color: #3b82f6;
+            color: white;
+            box-shadow: 0 4px 6px rgba(59, 130, 246, 0.5);
+        }
+
+        /* Attendance History Table */
+        #historyTable {
+            border-collapse: collapse;
+        }
+        
+        #historyTable thead {
+            background: #f3f4f6;
+        }
+        
+        #historyTable tbody tr {
+            border-bottom: 1px solid #e5e7eb;
+            transition: background-color 0.2s;
+        }
+        
+        #historyTable tbody tr:hover {
+            background-color: #f9fafb;
+        }
+        
+        #historyTable tbody tr:last-child {
+            border-bottom: none;
+        }
+        
+        #historyTable th,
+        #historyTable td {
+            padding: 8px 12px;
+            text-align: left;
+        }
+        
+        #historyTableContainer {
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            background: white;
+        }
+        
+        .history-date-today {
+            background-color: #dbeafe !important;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
@@ -448,31 +652,99 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
 
         <!-- Attendance Table -->
         <div class="bg-white p-6 rounded-lg shadow-md">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Attendance Records</h2>
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">Attendance Records</h2>
             <?php if (empty($filtered_attendance)): ?>
                 <p class="text-gray-600 text-center">No attendance records found.</p>
             <?php else: ?>
+                <!-- Total Students Display -->
+                <div class="mb-6 text-center">
+                    <div class="inline-block bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md">
+                        <span class="text-sm font-semibold uppercase tracking-wide">Total Students</span>
+                        <div class="text-3xl font-bold mt-1"><?php echo count($attendance); ?></div>
+                    </div>
+                </div>
+                <?php
+                // Sort attendance alphabetically by student name
+                usort($attendance, function($a, $b) {
+                    $nameA = isset($a['name']) ? strtolower(trim($a['name'])) : '';
+                    $nameB = isset($b['name']) ? strtolower(trim($b['name'])) : '';
+                    return strcmp($nameA, $nameB);
+                });
+                
+                // Group attendance by grade level (course_year)
+                $grouped_by_grade = [];
+                foreach ($attendance as $record) {
+                    $grade = $record['course_year'];
+                    if (!isset($grouped_by_grade[$grade])) {
+                        $grouped_by_grade[$grade] = [];
+                    }
+                    $grouped_by_grade[$grade][] = $record;
+                }
+                ksort($grouped_by_grade); // Sort by grade level
+                ?>
+                
+                <!-- Grade Level Summary -->
+                <div class="mb-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    <?php foreach ($grouped_by_grade as $grade => $records): ?>
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
+                            <div class="text-2xl font-bold text-blue-600"><?php echo htmlspecialchars($grade); ?></div>
+                            <div class="text-sm text-gray-600">Grade Level</div>
+                            <div class="text-xl font-semibold text-gray-800 mt-2"><?php echo count($records); ?></div>
+                            <div class="text-xs text-gray-500">Students</div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+
+                <!-- Compact Strand Filter Tabs -->
+                <div class="compact-strand-container">
+                    <span class="compact-strand-label">📚 Filter by Strand:</span>
+                    <div class="compact-strand-tabs">
+                        <button class="compact-strand-tab active" data-strand="all">
+                            All (<?php echo count($attendance); ?>)
+                        </button>
+                        <?php foreach ($strands as $strand): 
+                            $strandCount = count(array_filter($attendance, function($r) use ($strand) {
+                                return isset($r['course']) && trim($r['course']) === $strand;
+                            }));
+                        ?>
+                            <button class="compact-strand-tab" data-strand="<?php echo htmlspecialchars($strand); ?>">
+                                <?php echo htmlspecialchars($strand); ?> (<?php echo $strandCount; ?>)
+                            </button>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+
                 <div class="overflow-x-auto">
-                    <table class="min-w-full bg-white border" id="attendance-table">
-                        <thead>
-                            <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-                                <th class="py-3 px-6 text-center">Barcode</th>
-                                <th class="py-3 px-6 text-left">Student Name</th>
-                                <th class="py-3 px-6 text-left">Strand</th>
-                                <th class="py-3 px-6 text-left">Year Level</th>
-                                <th class="py-3 px-6 text-left">Date</th>
-                                <th class="py-3 px-6 text-left">Day</th>
-                                <th class="py-3 px-6 text-left">Time In</th>
-                                <th class="py-3 px-6 text-left">Time Out</th>
-                                <th class="py-3 px-6 text-left">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-gray-600 text-sm">
-                            <?php foreach ($attendance as $record): ?>
-                                <tr class="border-b hover:bg-gray-100"
+                    <?php foreach ($grouped_by_grade as $grade => $grade_records): ?>
+                        <div class="grade-section" data-grade="<?php echo htmlspecialchars($grade); ?>">
+                            <!-- Grade Level Header -->
+                            <div class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-3 rounded-t-lg mt-6 flex justify-between items-center">
+                                <h3 class="text-lg font-bold">Grade <?php echo htmlspecialchars($grade); ?></h3>
+                                <span class="bg-white text-blue-600 px-3 py-1 rounded-full text-sm font-semibold">
+                                    <?php echo count($grade_records); ?> Students
+                                </span>
+                            </div>
+                            
+                            <table class="min-w-full bg-white border mb-6" id="attendance-table-grade-<?php echo htmlspecialchars($grade); ?>">
+                            <thead>
+                                <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                                    <th class="py-3 px-6 text-center">Barcode</th>
+                                    <th class="py-3 px-6 text-left">Student Name</th>
+                                    <th class="py-3 px-6 text-left">Strand/Section</th>
+                                    <th class="py-3 px-6 text-left">Date</th>
+                                    <th class="py-3 px-6 text-left">Day</th>
+                                    <th class="py-3 px-6 text-left">Time In</th>
+                                    <th class="py-3 px-6 text-left">Time Out</th>
+                                    <th class="py-3 px-6 text-left">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-gray-600 text-sm">
+                                <?php foreach ($grade_records as $record): ?>
+                                <tr class="attendance-row border-b hover:bg-gray-100"
                                     data-barcode="<?php echo htmlspecialchars($record['barcode']); ?>"
                                     data-name="<?php echo htmlspecialchars($record['name']); ?>"
                                     data-course="<?php echo htmlspecialchars($record['course']); ?>"
+                                    data-strand="<?php echo htmlspecialchars(isset($record['course']) ? trim($record['course']) : 'Unknown'); ?>"
                                     data-course-year="<?php echo htmlspecialchars($record['course_year']); ?>"
                                     data-date="<?php echo (new DateTime($record['date']))->format('F j, Y'); ?>">
                                     <td class="py-3 px-6 text-center">
@@ -504,7 +776,6 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                                     </td>
                                     <td class="py-3 px-6"><?php echo htmlspecialchars($record['name']); ?></td>
                                     <td class="py-3 px-6"><?php echo htmlspecialchars($record['course']); ?></td>
-                                    <td class="py-3 px-6"><?php echo htmlspecialchars($record['course_year']); ?></td>
                                     <td class="py-3 px-6">
                                         <?php
                                         $date = new DateTime($record['date']);
@@ -577,9 +848,11 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                                         </div>
                                     </td>
                                 </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
             <?php endif; ?>
         </div>
@@ -615,54 +888,103 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                 <p><strong>Barcode ID:</strong> <span id="modalBarcodeId"></span></p>
             </div>
             <img id="enlargedBarcode" class="enlarged-barcode" src="" alt="Enlarged Barcode">
-            <div class="mt-4">
-                <button id="closeBarcodeModalBtn" class="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600">Close</button>
+            
+            <!-- Time In / Time Out Selection -->
+            <div class="mt-4 mb-4">
+                <p class="text-sm font-semibold text-gray-600 mb-2 text-center">Select Action:</p>
+                <div class="flex justify-center space-x-4">
+                    <div class="modal-action-box border-2 border-blue-500 text-blue-500 p-3 rounded-lg cursor-pointer font-semibold selected w-32 text-center transition-all"
+                         data-action="time_in">
+                        Time In
+                    </div>
+                    <div class="modal-action-box border-2 border-blue-500 text-blue-500 p-3 rounded-lg cursor-pointer font-semibold w-32 text-center transition-all"
+                         data-action="time_out">
+                        Time Out
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-4 flex justify-center space-x-2">
+                <button id="scanBarcodeFromModal" class="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600 transition-colors">
+                    📝 Record Attendance
+                </button>
+                <button id="closeBarcodeModalBtn" class="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600 transition-colors">Close</button>
             </div>
         </div>
     </div>
+    
+    <!-- Hidden form for attendance submission -->
+    <form id="attendance-scan-form" action="process_scan.php" method="POST" style="display: none;">
+        <input type="hidden" id="scan-barcode" name="barcode">
+        <input type="hidden" id="scan-action" name="action" value="time_in">
+    </form>
 
     <!-- View Attendance Modal -->
     <div id="viewModal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3>Attendance Details</h3>
+            <div class="modal-header" style="padding-bottom: 10px; margin-bottom: 12px;">
+                <h3 style="font-size: 16px; font-weight: 600;">Attendance Details</h3>
             </div>
             <div id="viewContent">
-                <div class="view-barcode-container">
-                    <img id="viewBarcodeImage" class="view-barcode-image" src="" alt="Student Barcode">
-                    <div class="barcode-id" id="viewBarcodeId"></div>
+                <div class="view-barcode-container" style="margin-bottom: 10px;">
+                    <img id="viewBarcodeImage" class="view-barcode-image" src="" alt="Student Barcode" style="max-width: 180px; height: auto;">
+                    <div class="barcode-id" id="viewBarcodeId" style="font-size: 10px; margin-top: 4px;"></div>
                 </div>
-                <div class="detail-row">
-                    <span class="detail-label">Name:</span>
+                <div class="detail-row" style="padding: 4px 0; font-size: 13px;">
+                    <span class="detail-label" style="font-weight: 600; color: #6b7280; min-width: 70px;">Name:</span>
                     <span class="detail-value" id="viewName"></span>
                 </div>
-                <div class="detail-row">
-                    <span class="detail-label">Strand:</span>
+                <div class="detail-row" style="padding: 4px 0; font-size: 13px;">
+                    <span class="detail-label" style="font-weight: 600; color: #6b7280; min-width: 70px;">Strand:</span>
                     <span class="detail-value" id="viewCourse"></span>
                 </div>
-                <div class="detail-row">
-                    <span class="detail-label">Year:</span>
+                <div class="detail-row" style="padding: 4px 0; font-size: 13px;">
+                    <span class="detail-label" style="font-weight: 600; color: #6b7280; min-width: 70px;">Year:</span>
                     <span class="detail-value" id="viewCourseYear"></span>
                 </div>
-                <div class="detail-row">
-                    <span class="detail-label">Date:</span>
+                <div class="detail-row" style="padding: 4px 0; font-size: 13px;">
+                    <span class="detail-label" style="font-weight: 600; color: #6b7280; min-width: 70px;">Date:</span>
                     <span class="detail-value" id="viewDate"></span>
                 </div>
-                <div class="detail-row">
-                    <span class="detail-label">Day:</span>
+                <div class="detail-row" style="padding: 4px 0; font-size: 13px;">
+                    <span class="detail-label" style="font-weight: 600; color: #6b7280; min-width: 70px;">Day:</span>
                     <span class="detail-value" id="viewDay"></span>
                 </div>
-                <div class="detail-row">
-                    <span class="detail-label">Time In:</span>
+                <div class="detail-row" style="padding: 4px 0; font-size: 13px;">
+                    <span class="detail-label" style="font-weight: 600; color: #6b7280; min-width: 70px;">Time In:</span>
                     <span class="detail-value" id="viewTimeIn"></span>
                 </div>
-                <div class="detail-row">
-                    <span class="detail-label">Time Out:</span>
+                <div class="detail-row" style="padding: 4px 0; font-size: 13px;">
+                    <span class="detail-label" style="font-weight: 600; color: #6b7280; min-width: 70px;">Time Out:</span>
                     <span class="detail-value" id="viewTimeOut"></span>
                 </div>
             </div>
-            <div class="modal-buttons">
-                <button id="closeViewModal" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Close</button>
+            
+            <!-- Attendance History Section -->
+            <div id="attendanceHistory" style="margin-top: 12px;">
+                <h4 style="color: #374151; margin-bottom: 8px; font-size: 13px; font-weight: 600; border-bottom: 1px solid #e5e7eb; padding-bottom: 4px;">📅 History</h4>
+                <div id="historyTableContainer" style="max-height: 180px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 4px;">
+                    <table class="min-w-full" id="historyTable" style="font-size: 11px;">
+                        <thead class="bg-gray-100 sticky top-0">
+                            <tr>
+                                <th class="py-1 px-2 text-left text-xs font-semibold text-gray-600">Date</th>
+                                <th class="py-1 px-2 text-left text-xs font-semibold text-gray-600">Day</th>
+                                <th class="py-1 px-2 text-left text-xs font-semibold text-gray-600">In</th>
+                                <th class="py-1 px-2 text-left text-xs font-semibold text-gray-600">Out</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody">
+                            <!-- History records will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="noHistoryMessage" style="display: none; padding: 12px; text-align: center; color: #6b7280; font-size: 12px;">
+                    No history found
+                </div>
+            </div>
+            
+            <div class="modal-buttons" style="margin-top: 12px;">
+                <button id="closeViewModal" class="bg-gray-500 text-white px-3 py-1.5 rounded text-sm hover:bg-gray-600">Close</button>
             </div>
         </div>
     </div>
@@ -742,8 +1064,13 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
             const courseYearSelect = document.getElementById('filter-course-year');
             const dateSelect = document.getElementById('filter-date');
             const searchInput = document.getElementById('filter-search');
-            const table = document.getElementById('attendance-table');
-            const rows = table ? table.querySelectorAll('tbody tr') : [];
+            // Get all tables (one per grade level)
+            const tables = document.querySelectorAll('table[id^="attendance-table-grade-"]');
+            const rows = [];
+            tables.forEach(table => {
+                const tableRows = table.querySelectorAll('tbody tr');
+                rows.push(...tableRows);
+            });
             const deleteModal = document.getElementById('deleteModal');
             const errorModal = document.getElementById('errorModal');
             const deleteMessage = document.getElementById('delete-message');
@@ -768,21 +1095,86 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
             const cancelEdit = document.getElementById('cancelEdit');
 
             // Barcode modal functionality
+            let currentModalBarcodeId = '';
+            const modalActionBoxes = document.querySelectorAll('.modal-action-box');
+            const scanBarcodeFromModal = document.getElementById('scanBarcodeFromModal');
+            const attendanceScanForm = document.getElementById('attendance-scan-form');
+            const scanBarcodeInput = document.getElementById('scan-barcode');
+            const scanActionInput = document.getElementById('scan-action');
+            
             function openBarcodeModal(imageSrc, barcodeId, name, course, year) {
                 document.getElementById('modalName').textContent = name;
                 document.getElementById('modalCourse').textContent = course;
                 document.getElementById('modalYear').textContent = year;
                 document.getElementById('modalBarcodeId').textContent = barcodeId;
                 enlargedBarcode.src = imageSrc;
+                currentModalBarcodeId = barcodeId;
                 barcodeModal.style.display = 'flex';
+                
+                // Reset to Time In by default
+                modalActionBoxes.forEach(box => box.classList.remove('selected'));
+                modalActionBoxes[0].classList.add('selected');
+                scanActionInput.value = 'time_in';
             }
 
             function closeBarcodeModalFunc() {
                 barcodeModal.style.display = 'none';
+                currentModalBarcodeId = '';
             }
+            
+            // Handle Time In / Time Out selection in modal
+            modalActionBoxes.forEach(box => {
+                box.addEventListener('click', () => {
+                    modalActionBoxes.forEach(b => b.classList.remove('selected'));
+                    box.classList.add('selected');
+                    scanActionInput.value = box.dataset.action;
+                });
+            });
+            
+            // Handle scan/record attendance from modal
+            scanBarcodeFromModal.addEventListener('click', async () => {
+                if (!currentModalBarcodeId) return;
+                
+                scanBarcodeInput.value = currentModalBarcodeId;
+                const action = scanActionInput.value;
+                
+                // Disable button and show loading state
+                scanBarcodeFromModal.disabled = true;
+                scanBarcodeFromModal.textContent = 'Processing...';
+                
+                try {
+                    const formData = new FormData(attendanceScanForm);
+                    const response = await fetch('process_scan.php', {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        body: new URLSearchParams(formData)
+                    });
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        // Show success message
+                        alert(`✅ ${result.message}`);
+                        closeBarcodeModalFunc();
+                        // Reload page to show updated attendance
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 500);
+                    } else {
+                        alert(`❌ ${result.message}`);
+                        // Re-enable button
+                        scanBarcodeFromModal.disabled = false;
+                        scanBarcodeFromModal.textContent = '📝 Record Attendance';
+                    }
+                } catch (error) {
+                    alert('❌ Network error occurred');
+                    // Re-enable button
+                    scanBarcodeFromModal.disabled = false;
+                    scanBarcodeFromModal.textContent = '📝 Record Attendance';
+                }
+            });
 
             // View modal functions
-            function openViewModal(data) {
+            async function openViewModal(data) {
                 // Set barcode image
                 const barcodeImage = document.getElementById('viewBarcodeImage');
                 const barcodeFile = `barcodes/${data.barcode}.png`;
@@ -815,7 +1207,86 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                     minute: '2-digit',
                     hour12: true
                 }) : 'Not recorded';
+                
+                // Load attendance history for this student
+                await loadAttendanceHistory(data.barcode, data.date);
+                
                 viewModal.style.display = 'flex';
+            }
+            
+            // Load and display attendance history
+            async function loadAttendanceHistory(barcode, currentDate) {
+                const historyTableBody = document.getElementById('historyTableBody');
+                const noHistoryMessage = document.getElementById('noHistoryMessage');
+                const historyTableContainer = document.getElementById('historyTableContainer');
+                
+                // Clear previous history
+                historyTableBody.innerHTML = '<tr><td colspan="4" class="text-center py-3 text-gray-500">Loading history...</td></tr>';
+                
+                try {
+                    // Fetch attendance history from server
+                    const response = await fetch(`get_attendance_history.php?barcode=${encodeURIComponent(barcode)}`, {
+                        method: 'GET',
+                        credentials: 'same-origin',
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.error('Server response:', errorText);
+                        throw new Error(`Failed to fetch history: ${response.status}`);
+                    }
+                    
+                    const studentHistory = await response.json();
+                    
+                    if (!Array.isArray(studentHistory) || studentHistory.length === 0) {
+                        historyTableContainer.style.display = 'none';
+                        noHistoryMessage.style.display = 'block';
+                        return;
+                    }
+                    
+                    historyTableContainer.style.display = 'block';
+                    noHistoryMessage.style.display = 'none';
+                    
+                    // Build table rows
+                    let historyHTML = '';
+                    const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                    
+                    studentHistory.forEach((record, index) => {
+                        const recordDate = new Date(record.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                        const isToday = recordDate === currentDate || recordDate === today;
+                        const rowClass = isToday ? 'history-date-today' : '';
+                        
+                        const timeInDisplay = record.time_in ? new Date('1970-01-01T' + record.time_in).toLocaleTimeString('en-US', {
+                            hour: 'numeric',
+                            minute: '2-digit',
+                            hour12: true
+                        }) : '-';
+                        
+                        const timeOutDisplay = record.time_out ? new Date('1970-01-01T' + record.time_out).toLocaleTimeString('en-US', {
+                            hour: 'numeric',
+                            minute: '2-digit',
+                            hour12: true
+                        }) : '-';
+                        
+                        historyHTML += `
+                            <tr class="${rowClass}" style="border-bottom: 1px solid #f3f4f6;">
+                                <td class="py-1 px-2 text-gray-700" style="font-size: 11px;">${recordDate}${isToday ? ' <span class="text-blue-600" style="font-size: 10px; font-weight: 600;">(Today)</span>' : ''}</td>
+                                <td class="py-1 px-2 text-gray-600" style="font-size: 11px;">${record.day}</td>
+                                <td class="py-1 px-2 text-gray-700" style="font-size: 11px;">${timeInDisplay}</td>
+                                <td class="py-1 px-2 text-gray-700" style="font-size: 11px;">${timeOutDisplay}</td>
+                            </tr>
+                        `;
+                    });
+                    
+                    historyTableBody.innerHTML = historyHTML;
+                    
+                } catch (error) {
+                    console.error('Error loading attendance history:', error);
+                    historyTableBody.innerHTML = '<tr><td colspan="4" class="text-center py-3 text-red-500">Error loading history</td></tr>';
+                }
             }
 
             function closeViewModalFunc() {
@@ -930,7 +1401,50 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
             dateSelect.addEventListener('change', applyFilters);
             searchInput.addEventListener('input', applyFilters);
 
-            table.addEventListener('click', async (e) => {
+            // Compact strand filter tabs functionality
+            const strandTabs = document.querySelectorAll('.compact-strand-tab');
+            const attendanceRows = document.querySelectorAll('.attendance-row');
+            const gradeSections = document.querySelectorAll('.grade-section');
+            
+            strandTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all tabs
+                    strandTabs.forEach(t => t.classList.remove('active'));
+                    // Add active class to clicked tab
+                    tab.classList.add('active');
+                    
+                    const selectedStrand = tab.dataset.strand;
+                    
+                    // Filter attendance rows
+                    attendanceRows.forEach(row => {
+                        if (selectedStrand === 'all') {
+                            row.classList.remove('hidden');
+                        } else {
+                            if (row.dataset.strand === selectedStrand) {
+                                row.classList.remove('hidden');
+                            } else {
+                                row.classList.add('hidden');
+                            }
+                        }
+                    });
+
+                    // Hide/show grade sections based on whether they have visible rows
+                    gradeSections.forEach(section => {
+                        const sectionRows = section.querySelectorAll('.attendance-row');
+                        const hasVisibleRows = Array.from(sectionRows).some(row => !row.classList.contains('hidden'));
+                        
+                        if (hasVisibleRows) {
+                            section.classList.remove('hidden');
+                        } else {
+                            section.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+
+            // Add click listeners to all tables
+            tables.forEach(table => {
+                table.addEventListener('click', async (e) => {
                 if (e.target.classList.contains('view-attendance')) {
                     const data = {
                         barcode: e.target.dataset.barcode,
@@ -1017,7 +1531,8 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                         button.classList.remove('opacity-50');
                     }
                 }
-            });
+                });
+            }); // End forEach for tables
 
             // Edit form submission
             editForm.addEventListener('submit', async (e) => {

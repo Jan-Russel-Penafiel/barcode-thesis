@@ -12,6 +12,23 @@ date_default_timezone_set('Asia/Manila');
 require_once 'data_helper.php';
 $data = load_data();
 $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
+
+// Sort barcodes alphabetically by student name
+usort($barcodes, function($a, $b) {
+    $nameA = isset($a['name']) ? strtolower(trim($a['name'])) : '';
+    $nameB = isset($b['name']) ? strtolower(trim($b['name'])) : '';
+    return strcmp($nameA, $nameB);
+});
+
+// Extract unique strands for filtering
+$strands = [];
+foreach ($barcodes as $barcode) {
+    $strand = isset($barcode['course']) ? trim($barcode['course']) : 'Unknown';
+    if (!in_array($strand, $strands)) {
+        $strands[] = $strand;
+    }
+}
+sort($strands);
 ?>
 
 <!DOCTYPE html>
@@ -115,6 +132,48 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
         
         .barcode-clickable:hover {
             transform: scale(1.05);
+        }
+        
+        /* Strand filter tabs */
+        .strand-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        
+        .strand-tab {
+            padding: 10px 20px;
+            border: 2px solid #3b82f6;
+            border-radius: 8px;
+            background: white;
+            color: #3b82f6;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .strand-tab:hover {
+            background: #3b82f6;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+        }
+        
+        .strand-tab.active {
+            background: #3b82f6;
+            color: white;
+            box-shadow: 0 4px 6px rgba(59, 130, 246, 0.5);
+        }
+        
+        .barcode-row {
+            transition: opacity 0.3s ease;
+        }
+        
+        .barcode-row.hidden {
+            display: none;
         }
         
         .scanner-status {
@@ -269,6 +328,21 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
             <?php if (empty($barcodes)): ?>
                 <p class="text-center text-gray-600">No barcodes available.</p>
             <?php else: ?>
+                <!-- Strand Filter Tabs -->
+                <div class="strand-tabs">
+                    <button class="strand-tab active" data-strand="all">
+                        📚 All Strands (<?php echo count($barcodes); ?>)
+                    </button>
+                    <?php foreach ($strands as $strand): 
+                        $strandCount = count(array_filter($barcodes, function($b) use ($strand) {
+                            return isset($b['course']) && trim($b['course']) === $strand;
+                        }));
+                    ?>
+                        <button class="strand-tab" data-strand="<?php echo htmlspecialchars($strand); ?>">
+                            <?php echo htmlspecialchars($strand); ?> (<?php echo $strandCount; ?>)
+                        </button>
+                    <?php endforeach; ?>
+                </div>
                 <div class="overflow-x-auto">
                     <table class="min-w-full bg-white rounded-lg shadow-md">
                         <thead>
@@ -282,7 +356,9 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
                         </thead>
                         <tbody class="text-gray-600 text-sm">
                             <?php foreach ($barcodes as $barcode): ?>
-                                <tr class="border-b border-gray-200 hover:bg-gray-100" style="height: 100px;"> <!-- Added minimum row height for better visibility -->
+                                <tr class="barcode-row border-b border-gray-200 hover:bg-gray-100" 
+                                    data-strand="<?php echo htmlspecialchars(isset($barcode['course']) ? trim($barcode['course']) : 'Unknown'); ?>" 
+                                    style="height: 100px;"> <!-- Added minimum row height for better visibility -->
                                     <td class="py-3 px-6"><?php echo htmlspecialchars($barcode['name']); ?></td>
                                     <td class="py-3 px-6"><?php echo htmlspecialchars($barcode['course']); ?></td>
                                     <td class="py-3 px-6"><?php echo htmlspecialchars($barcode['course_year']); ?></td>
@@ -700,6 +776,34 @@ $barcodes = isset($data['barcodes']) ? $data['barcodes'] : [];
                     const barcode = button.dataset.barcode;
                     barcodeInput.value = barcode;
                     form.dispatchEvent(new Event('submit'));
+                });
+            });
+
+            // Strand filter tabs functionality
+            const strandTabs = document.querySelectorAll('.strand-tab');
+            const barcodeRows = document.querySelectorAll('.barcode-row');
+            
+            strandTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all tabs
+                    strandTabs.forEach(t => t.classList.remove('active'));
+                    // Add active class to clicked tab
+                    tab.classList.add('active');
+                    
+                    const selectedStrand = tab.dataset.strand;
+                    
+                    // Filter barcode rows
+                    barcodeRows.forEach(row => {
+                        if (selectedStrand === 'all') {
+                            row.classList.remove('hidden');
+                        } else {
+                            if (row.dataset.strand === selectedStrand) {
+                                row.classList.remove('hidden');
+                            } else {
+                                row.classList.add('hidden');
+                            }
+                        }
+                    });
                 });
             });
 

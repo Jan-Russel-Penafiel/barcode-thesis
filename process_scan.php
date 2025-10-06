@@ -47,6 +47,33 @@ $current_date = date('Y-m-d');
 $current_time = date('H:i:s');
 $current_day = date('l');
 
+// CLEANUP: Remove any duplicate records for the same barcode and date
+// Keep only the first record and merge data if needed
+$cleaned_attendance = [];
+$seen_records = [];
+
+foreach ($attendance as $record) {
+    $key = $record['barcode'] . '|' . $record['date'];
+    
+    if (!isset($seen_records[$key])) {
+        // First occurrence - keep it
+        $seen_records[$key] = count($cleaned_attendance);
+        $cleaned_attendance[] = $record;
+    } else {
+        // Duplicate found - merge the data (keep non-empty values)
+        $existing_index = $seen_records[$key];
+        if (empty($cleaned_attendance[$existing_index]['time_in']) && !empty($record['time_in'])) {
+            $cleaned_attendance[$existing_index]['time_in'] = $record['time_in'];
+        }
+        if (empty($cleaned_attendance[$existing_index]['time_out']) && !empty($record['time_out'])) {
+            $cleaned_attendance[$existing_index]['time_out'] = $record['time_out'];
+        }
+    }
+}
+
+// Replace with cleaned attendance
+$attendance = $cleaned_attendance;
+
 // Find existing attendance record for today
 $record_index = -1;
 foreach ($attendance as $index => $record) {

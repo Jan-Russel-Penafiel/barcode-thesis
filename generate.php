@@ -21,6 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_SPECIAL_CHARS);
     $course = filter_input(INPUT_POST, 'course', FILTER_SANITIZE_SPECIAL_CHARS);
     $course_year = filter_input(INPUT_POST, 'course_year', FILTER_SANITIZE_SPECIAL_CHARS);
+    $gender = filter_input(INPUT_POST, 'gender', FILTER_SANITIZE_SPECIAL_CHARS);
     if (empty($name) || empty($course) || empty($course_year)) {
         $error = "All fields are required.";
     } else {
@@ -43,7 +44,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     "barcode" => $barcode,
                     "name" => $name,
                     "course" => $course,
-                    "course_year" => $course_year
+                    "course_year" => $course_year,
+                    "gender" => $gender ?? 'Not specified'
                 ];
                 
                 // Automatically create an attendance record for today (without time in)
@@ -138,6 +140,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="mb-4">
                     <label for="course_year" class="block text-gray-700 mb-2">Year Level</label>
                     <input type="text" name="course_year" id="course_year" placeholder="Enter year level" required class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="mb-4">
+                    <label for="gender" class="block text-gray-700 mb-2">Gender</label>
+                    <select name="gender" id="gender" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">Select gender (optional)</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
                 </div>
                 <button type="submit" id="submitButton" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 flex items-center justify-center">
                     <span id="buttonText">Generate and Save Barcode</span>
