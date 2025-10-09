@@ -597,6 +597,29 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
             background-color: #dbeafe !important;
             font-weight: 600;
         }
+        
+        /* Highlighted row animation for scanned barcode */
+        .attendance-row.highlighted {
+            animation: highlightPulse 2s ease-in-out 3;
+            background-color: #fef3c7 !important;
+            border-left: 4px solid #f59e0b;
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+        }
+        
+        @keyframes highlightPulse {
+            0%, 100% {
+                background-color: #fef3c7;
+                transform: scale(1);
+            }
+            50% {
+                background-color: #fcd34d;
+                transform: scale(1.01);
+            }
+        }
+        
+        .attendance-row.highlighted td {
+            font-weight: 600;
+        }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
@@ -1064,6 +1087,38 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
             const courseYearSelect = document.getElementById('filter-course-year');
             const dateSelect = document.getElementById('filter-date');
             const searchInput = document.getElementById('filter-search');
+            
+            // Check for highlighted barcode from URL parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const highlightBarcode = urlParams.get('highlight');
+            
+            if (highlightBarcode) {
+                // Find the row with matching barcode
+                setTimeout(() => {
+                    const targetRow = document.querySelector(`tr.attendance-row[data-barcode="${highlightBarcode}"]`);
+                    
+                    if (targetRow) {
+                        // Add highlight class
+                        targetRow.classList.add('highlighted');
+                        
+                        // Scroll to the row smoothly
+                        targetRow.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center',
+                            inline: 'nearest'
+                        });
+                        
+                        // Remove highlight after animation (6 seconds: 2s x 3 iterations)
+                        setTimeout(() => {
+                            targetRow.classList.remove('highlighted');
+                            // Clean up URL parameter
+                            const newUrl = window.location.pathname + window.location.search.replace(/[?&]highlight=[^&]+/, '').replace(/^&/, '?');
+                            window.history.replaceState({}, document.title, newUrl || window.location.pathname);
+                        }, 6000);
+                    }
+                }, 500); // Wait for page to fully render
+            }
+            
             // Get all tables (one per grade level)
             const tables = document.querySelectorAll('table[id^="attendance-table-grade-"]');
             const rows = [];

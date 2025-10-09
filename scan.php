@@ -351,7 +351,6 @@ sort($strands);
                                 <th class="py-3 px-6 text-left">Strand</th>
                                 <th class="py-3 px-6 text-left">Year Level</th>
                                 <th class="py-3 px-6 text-center">Barcode</th>
-                                <th class="py-3 px-6 text-center">Quick Scan</th>
                             </tr>
                         </thead>
                         <tbody class="text-gray-600 text-sm">
@@ -377,12 +376,6 @@ sort($strands);
                                         <?php else: ?>
                                             <span class="text-red-500">Barcode image not found</span>
                                         <?php endif; ?>
-                                    </td>
-                                    <td class="py-3 px-6 text-center">
-                                        <button class="quick-scan-btn bg-blue-500 text-white px-3 py-1 rounded text-xs hover:bg-blue-600"
-                                                data-barcode="<?php echo htmlspecialchars($barcode['barcode']); ?>">
-                                            Quick Scan
-                                        </button>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -770,15 +763,6 @@ sort($strands);
                 }
             });
 
-            // Quick scan buttons
-            document.querySelectorAll('.quick-scan-btn').forEach(button => {
-                button.addEventListener('click', () => {
-                    const barcode = button.dataset.barcode;
-                    barcodeInput.value = barcode;
-                    form.dispatchEvent(new Event('submit'));
-                });
-            });
-
             // Strand filter tabs functionality
             const strandTabs = document.querySelectorAll('.strand-tab');
             const barcodeRows = document.querySelectorAll('.barcode-row');
@@ -938,13 +922,14 @@ sort($strands);
 
                     if (result.success) {
                         updateMainScannerStatus('success', result.message, barcodeInput.value);
+                        const scannedBarcode = barcodeInput.value;
                         barcodeInput.value = '';
                         scannerBuffer = '';
                         isScanning = false;
-                        // Redirect to index.php after successful attendance recording
+                        // Redirect to index.php with barcode parameter for highlighting
                         setTimeout(() => {
-                            window.location.href = 'index.php';
-                        }, 2000); // Longer delay to show success message
+                            window.location.href = `index.php?highlight=${encodeURIComponent(scannedBarcode)}`;
+                        }, 1500); // Show success message before redirect
                     } else {
                         updateMainScannerStatus('error', result.message, barcodeInput.value);
                         // Reset after showing error
