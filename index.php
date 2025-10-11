@@ -645,7 +645,7 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
             <h3 class="text-lg font-semibold text-gray-700 mb-4">Filter Attendance</h3>
             <form id="filter-form" class="grid grid-cols-1 sm:grid-cols-4 gap-4">
                 <select name="course" id="filter-course" class="p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="">Strand</option>
+                    <option value="">Strand/Year Level & Section</option>
                     <?php foreach (array_unique(array_column($attendance, 'course')) as $course): ?>
                         <option value="<?php echo htmlspecialchars($course); ?>" <?php if ($filter_course === $course) echo 'selected'; ?>>
                             <?php echo htmlspecialchars($course); ?>
@@ -720,7 +720,7 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
 
                 <!-- Compact Strand Filter Tabs -->
                 <div class="compact-strand-container">
-                    <span class="compact-strand-label">📚 Filter by Strand:</span>
+                    <span class="compact-strand-label">📚 Filter by Strand/Year Level & Section:</span>
                     <div class="compact-strand-tabs">
                         <button class="compact-strand-tab active" data-strand="all">
                             All (<?php echo count($attendance); ?>)
@@ -753,7 +753,7 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                                 <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
                                     <th class="py-3 px-6 text-center">Barcode</th>
                                     <th class="py-3 px-6 text-left">Student Name</th>
-                                    <th class="py-3 px-6 text-left">Strand/Section</th>
+                                    <th class="py-3 px-6 text-left">Strand/Year Level & Section</th>
                                     <th class="py-3 px-6 text-left">Date</th>
                                     <th class="py-3 px-6 text-left">Day</th>
                                     <th class="py-3 px-6 text-left">Time In</th>

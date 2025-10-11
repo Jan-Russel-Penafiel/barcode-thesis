@@ -190,7 +190,7 @@ sort($course_years);
             <h3 class="text-lg font-semibold text-gray-700 mb-4">Filter Barcodes</h3>
             <form id="filter-form" class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <select name="course" id="filter-course" class="p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="">All Strands</option>
+                    <option value="">All Strand/Year Level & Section</option>
                     <?php foreach ($courses as $course): ?>
                         <option value="<?php echo htmlspecialchars($course); ?>" <?php if ($filter_course === $course) echo 'selected'; ?>>
                             <?php echo htmlspecialchars($course); ?>
@@ -218,7 +218,7 @@ sort($course_years);
                     <thead>
                         <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
                             <th class="py-3 px-6 text-left">Student Name</th>
-                            <th class="py-3 px-6 text-left">Strand</th>
+                            <th class="py-3 px-6 text-left">Strand/Year Level & Section</th>
                             <th class="py-3 px-6 text-left">Year Level</th>
                             <th class="py-3 px-6 text-center">Barcode</th>
                             <th class="py-3 px-6 text-center">Action</th>
@@ -279,7 +279,7 @@ sort($course_years);
                     <input type="text" id="edit-name" name="name" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                 </div>
                 <div class="mb-4">
-                    <label for="edit-course" class="block text-gray-600">Strand</label>
+                    <label for="edit-course" class="block text-gray-600">Strand/Year Level & Section</label>
                     <input type="text" id="edit-course" name="course" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                 </div>
                 <div class="mb-4">
@@ -301,7 +301,7 @@ sort($course_years);
             <h3 class="text-xl font-semibold text-gray-700 mb-4">Barcode Details</h3>
             <div id="barcodeDetails">
                 <p><strong>Student Name:</strong> <span id="modalName"></span></p>
-                <p><strong>Strand:</strong> <span id="modalCourse"></span></p>
+                <p><strong>Strand/Year Level & Section:</strong> <span id="modalCourse"></span></p>
                 <p><strong>Year Level:</strong> <span id="modalYear"></span></p>
                 <p><strong>Barcode ID:</strong> <span id="modalBarcodeId"></span></p>
             </div>

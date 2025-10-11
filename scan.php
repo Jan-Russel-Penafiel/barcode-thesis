@@ -348,7 +348,7 @@ sort($strands);
                         <thead>
                             <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
                                 <th class="py-3 px-6 text-left">Student Name</th>
-                                <th class="py-3 px-6 text-left">Strand</th>
+                                <th class="py-3 px-6 text-left">Strand/Year Level & Section</th>
                                 <th class="py-3 px-6 text-left">Year Level</th>
                                 <th class="py-3 px-6 text-center">Barcode</th>
                             </tr>
