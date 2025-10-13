@@ -12,6 +12,11 @@ require_once 'data_helper.php';
 $data = load_data();
 $attendance = isset($data['attendance']) ? $data['attendance'] : [];
 
+// Get today's date and day for display
+$today_date = date('Y-m-d');
+$today_day = date('l');
+$today_display = date('F j, Y');
+
 // Store ALL attendance records for history (don't modify the original data)
 $all_attendance_records = $attendance;
 
@@ -801,11 +806,16 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                                     <td class="py-3 px-6"><?php echo htmlspecialchars($record['course']); ?></td>
                                     <td class="py-3 px-6">
                                         <?php
-                                        $date = new DateTime($record['date']);
-                                        echo $date->format('F j, Y'); // e.g., May 11, 2025
+                                        // Always display today's date dynamically
+                                        echo $today_display; // e.g., October 13, 2025
                                         ?>
                                     </td>
-                                    <td class="py-3 px-6"><?php echo htmlspecialchars($record['day']); ?></td>
+                                    <td class="py-3 px-6">
+                                        <?php
+                                        // Always display today's day dynamically
+                                        echo $today_day; // e.g., Sunday, Monday, Tuesday, etc.
+                                        ?>
+                                    </td>
                                     <td class="py-3 px-6">
                                         <?php
                                         if ($record['time_in']) {
