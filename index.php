@@ -625,6 +625,156 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
         .attendance-row.highlighted td {
             font-weight: 600;
         }
+
+        /* ID Card Print Styles */
+        @media print {
+            @page {
+                size: letter;
+                margin: 0.5in;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            html, body {
+                width: 100%;
+                min-height: 100vh;
+                margin: 0;
+                padding: 0;
+                background: white;
+                font-family: Arial, sans-serif;
+            }
+
+            .print-container {
+                width: 100%;
+                min-height: 100vh;
+                display: flex !important;
+                align-items: center;
+                justify-content: center;
+                page-break-after: avoid;
+                margin: 0;
+                padding: 0;
+            }
+
+            .id-card-print {
+                width: 3.5in;
+                height: 2.25in;
+                border: 2px solid #333;
+                border-radius: 10px;
+                padding: 12px;
+                background: white;
+                box-shadow: 0 0 10px rgba(0,0,0,0.3);
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                page-break-inside: avoid;
+                flex-shrink: 0;
+            }
+
+            .id-card-header {
+                text-align: center;
+                border-bottom: 2px solid #3b82f6;
+                padding-bottom: 8px;
+                margin-bottom: 8px;
+            }
+
+            .id-card-header h2 {
+                font-size: 14px;
+                color: #3b82f6;
+                margin: 0;
+                font-weight: 700;
+            }
+
+            .id-card-content {
+                display: flex;
+                gap: 8px;
+                align-items: flex-start;
+            }
+
+            .id-card-barcode-container {
+                flex-shrink: 0;
+                text-align: center;
+            }
+
+            .id-card-icon {
+                font-size: 56px;
+                margin-bottom: 8px;
+                line-height: 1;
+            }
+
+            .id-card-barcode-container img {
+                max-width: 0.8in;
+                height: auto;
+            }
+
+            .id-card-info {
+                flex: 1;
+                font-size: 10px;
+            }
+
+            .id-card-info-row {
+                display: flex;
+                margin-bottom: 4px;
+                line-height: 1.2;
+            }
+
+            .id-card-info-label {
+                font-weight: 700;
+                min-width: 45px;
+                color: #333;
+            }
+
+            .id-card-info-value {
+                flex: 1;
+                word-break: break-word;
+                color: #555;
+            }
+
+            .id-card-footer {
+                text-align: center;
+                border-top: 1px dashed #ccc;
+                padding-top: 4px;
+                margin-top: 4px;
+                font-size: 8px;
+                color: #999;
+            }
+
+            /* Hide everything except print container */
+            nav, .container, #deleteModal, #errorModal, #barcodeModal, #viewModal, #editModal {
+                display: none !important;
+            }
+
+            .print-container {
+                display: flex !important;
+            }
+        }
+
+        .id-card-print-hidden {
+            display: none;
+        }
+
+        .print-button {
+            background-color: #8b5cf6;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .print-button:hover {
+            background-color: #7c3aed;
+        }
+
+        .print-button:active {
+            transform: scale(0.98);
+        }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
@@ -941,6 +1091,9 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                 <button id="scanBarcodeFromModal" class="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600 transition-colors">
                     📝 Record Attendance
                 </button>
+                <button id="printBarcodeBtn" class="print-button">
+                    🖨️ Print ID Card
+                </button>
                 <button id="closeBarcodeModalBtn" class="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600 transition-colors">Close</button>
             </div>
         </div>
@@ -951,6 +1104,44 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
         <input type="hidden" id="scan-barcode" name="barcode">
         <input type="hidden" id="scan-action" name="action" value="time_in">
     </form>
+
+    <!-- Hidden Print Container for ID Card -->
+    <div id="printContainer" class="id-card-print-hidden">
+        <div class="print-container">
+            <div class="id-card-print">
+                <div class="id-card-header">
+                    <h2>STUDENT ID CARD</h2>
+                </div>
+                <div class="id-card-content">
+                    <div class="id-card-barcode-container">
+                        <div class="id-card-icon">👤</div>
+                        <img id="printBarcodeImage" src="" alt="Barcode">
+                    </div>
+                    <div class="id-card-info">
+                        <div class="id-card-info-row">
+                            <span class="id-card-info-label">ID:</span>
+                            <span class="id-card-info-value" id="printBarcodeId"></span>
+                        </div>
+                        <div class="id-card-info-row">
+                            <span class="id-card-info-label">Name:</span>
+                            <span class="id-card-info-value" id="printName"></span>
+                        </div>
+                        <div class="id-card-info-row">
+                            <span class="id-card-info-label">Strand:</span>
+                            <span class="id-card-info-value" id="printStrand"></span>
+                        </div>
+                        <div class="id-card-info-row">
+                            <span class="id-card-info-label">Year:</span>
+                            <span class="id-card-info-value" id="printYear"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="id-card-footer">
+                    <p id="printDate"></p>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- View Attendance Modal -->
     <div id="viewModal">
@@ -1187,6 +1378,34 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                 currentModalBarcodeId = '';
             }
             
+            // Print ID Card function
+            function printIDCard(barcodeId, name, course, year) {
+                // Populate print container with data
+                document.getElementById('printBarcodeImage').src = `barcodes/${barcodeId}.png`;
+                document.getElementById('printBarcodeId').textContent = barcodeId;
+                document.getElementById('printName').textContent = name;
+                document.getElementById('printStrand').textContent = course;
+                document.getElementById('printYear').textContent = year;
+                
+                const today = new Date();
+                const dateStr = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                document.getElementById('printDate').textContent = `Issued: ${dateStr}`;
+                
+                // Show print container
+                const printContainer = document.getElementById('printContainer');
+                printContainer.classList.remove('id-card-print-hidden');
+                
+                // Trigger print dialog
+                setTimeout(() => {
+                    window.print();
+                    
+                    // Hide print container after print
+                    setTimeout(() => {
+                        printContainer.classList.add('id-card-print-hidden');
+                    }, 500);
+                }, 100);
+            }
+            
             // Handle Time In / Time Out selection in modal
             modalActionBoxes.forEach(box => {
                 box.addEventListener('click', () => {
@@ -1256,12 +1475,21 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                 document.getElementById('viewName').textContent = data.name;
                 document.getElementById('viewCourse').textContent = data.course;
                 document.getElementById('viewCourseYear').textContent = data.courseYear;
-                document.getElementById('viewDate').textContent = new Date(data.date).toLocaleDateString('en-US', {
+                
+                // Display today's date (same as the records table)
+                const today = new Date();
+                const todayDisplay = today.toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'long',
                     day: 'numeric'
                 });
-                document.getElementById('viewDay').textContent = data.day;
+                document.getElementById('viewDate').textContent = todayDisplay;
+                
+                // Get today's day name
+                const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                const todayDay = dayNames[today.getDay()];
+                document.getElementById('viewDay').textContent = todayDay;
+                
                 document.getElementById('viewTimeIn').textContent = data.timeIn ? new Date('1970-01-01T' + data.timeIn).toLocaleTimeString('en-US', {
                     hour: 'numeric',
                     minute: '2-digit',
@@ -1274,7 +1502,7 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                 }) : 'Not recorded';
                 
                 // Load attendance history for this student
-                await loadAttendanceHistory(data.barcode, data.date);
+                await loadAttendanceHistory(data.barcode, todayDisplay);
                 
                 viewModal.style.display = 'flex';
             }
@@ -1315,14 +1543,23 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                     historyTableContainer.style.display = 'block';
                     noHistoryMessage.style.display = 'none';
                     
+                    // Get today's date and day
+                    const today = new Date();
+                    const todayDisplay = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                    const todayDay = dayNames[today.getDay()];
+                    
                     // Build table rows
                     let historyHTML = '';
-                    const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
                     
                     studentHistory.forEach((record, index) => {
                         const recordDate = new Date(record.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-                        const isToday = recordDate === currentDate || recordDate === today;
+                        const isToday = recordDate === currentDate || recordDate === todayDisplay;
                         const rowClass = isToday ? 'history-date-today' : '';
+                        
+                        // Display today's date and day for all records
+                        const displayDate = todayDisplay;
+                        const displayDay = todayDay;
                         
                         const timeInDisplay = record.time_in ? new Date('1970-01-01T' + record.time_in).toLocaleTimeString('en-US', {
                             hour: 'numeric',
@@ -1338,8 +1575,8 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                         
                         historyHTML += `
                             <tr class="${rowClass}" style="border-bottom: 1px solid #f3f4f6;">
-                                <td class="py-1 px-2 text-gray-700" style="font-size: 11px;">${recordDate}${isToday ? ' <span class="text-blue-600" style="font-size: 10px; font-weight: 600;">(Today)</span>' : ''}</td>
-                                <td class="py-1 px-2 text-gray-600" style="font-size: 11px;">${record.day}</td>
+                                <td class="py-1 px-2 text-gray-700" style="font-size: 11px;">${displayDate}${isToday ? ' <span class="text-blue-600" style="font-size: 10px; font-weight: 600;">(Today)</span>' : ''}</td>
+                                <td class="py-1 px-2 text-gray-600" style="font-size: 11px;">${displayDay}</td>
                                 <td class="py-1 px-2 text-gray-700" style="font-size: 11px;">${timeInDisplay}</td>
                                 <td class="py-1 px-2 text-gray-700" style="font-size: 11px;">${timeOutDisplay}</td>
                             </tr>
@@ -1393,6 +1630,16 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
             closeBarcodeModalBtn.addEventListener('click', closeBarcodeModalFunc);
             closeViewModal.addEventListener('click', closeViewModalFunc);
             cancelEdit.addEventListener('click', closeEditModalFunc);
+
+            // Print button click handler
+            document.getElementById('printBarcodeBtn').addEventListener('click', () => {
+                if (currentModalBarcodeId) {
+                    const name = document.getElementById('modalName').textContent;
+                    const course = document.getElementById('modalCourse').textContent;
+                    const year = document.getElementById('modalYear').textContent;
+                    printIDCard(currentModalBarcodeId, name, course, year);
+                }
+            });
 
             // Close modals when clicking outside
             barcodeModal.addEventListener('click', (e) => {
