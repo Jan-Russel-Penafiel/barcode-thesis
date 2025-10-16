@@ -5363,6 +5363,26 @@
             "day": "Monday",
             "time_in": null,
             "time_out": null
+        },
+        {
+            "barcode": "17603367452970",
+            "name": "BARACOSO, Thames Aivan S.",
+            "course": "Grade 11 - Automotive",
+            "course_year": "11",
+            "date": "2025-10-16",
+            "day": "Thursday",
+            "time_in": "20:01:27",
+            "time_out": "20:02:15"
+        },
+        {
+            "barcode": "17603366549580",
+            "name": "ABARIENTOS, James Carl C.",
+            "course": "Grade 7 - St. Philomena",
+            "course_year": "7",
+            "date": "2025-10-16",
+            "day": "Thursday",
+            "time_in": "20:03:26",
+            "time_out": "20:03:33"
         }
     ]
 }
