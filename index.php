@@ -1091,9 +1091,6 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                 <button id="scanBarcodeFromModal" class="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600 transition-colors">
                     📝 Record Attendance
                 </button>
-                <button id="printBarcodeBtn" class="print-button">
-                    🖨️ Print ID Card
-                </button>
                 <button id="closeBarcodeModalBtn" class="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600 transition-colors">Close</button>
             </div>
         </div>
@@ -1208,6 +1205,9 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
             </div>
             
             <div class="modal-buttons" style="margin-top: 12px;">
+                <button id="printDetailsBarcodeBtn" class="print-button" style="margin-right: auto;">
+                    🖨️ Print ID Card
+                </button>
                 <button id="closeViewModal" class="bg-gray-500 text-white px-3 py-1.5 rounded text-sm hover:bg-gray-600">Close</button>
             </div>
         </div>
@@ -1631,13 +1631,14 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
             closeViewModal.addEventListener('click', closeViewModalFunc);
             cancelEdit.addEventListener('click', closeEditModalFunc);
 
-            // Print button click handler
-            document.getElementById('printBarcodeBtn').addEventListener('click', () => {
-                if (currentModalBarcodeId) {
-                    const name = document.getElementById('modalName').textContent;
-                    const course = document.getElementById('modalCourse').textContent;
-                    const year = document.getElementById('modalYear').textContent;
-                    printIDCard(currentModalBarcodeId, name, course, year);
+            // Print button click handler in Attendance Details modal
+            document.getElementById('printDetailsBarcodeBtn').addEventListener('click', () => {
+                const barcodeId = document.getElementById('viewBarcodeId').textContent;
+                const name = document.getElementById('viewName').textContent;
+                const course = document.getElementById('viewCourse').textContent;
+                const year = document.getElementById('viewCourseYear').textContent;
+                if (barcodeId) {
+                    printIDCard(barcodeId, name, course, year);
                 }
             });
 
