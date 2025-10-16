@@ -401,6 +401,10 @@ sort($strands);
             <div class="scanner-status scanner-ready" id="scannerStatus">
                 📱 GOOJPRT MP2300 Scanner Ready - Point your scanner at the barcode above (2-6 inches distance, slight angle)
             </div>
+            <div class="mt-4">
+                <button id="scanFromModal" class="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600 mr-2">Scan This Barcode</button>
+                <button id="closeBarcodeModalBtn" class="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600">Close</button>
+            </div>
         </div>
     </div>
 
