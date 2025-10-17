@@ -5383,6 +5383,16 @@
             "day": "Thursday",
             "time_in": "20:03:26",
             "time_out": "20:03:33"
+        },
+        {
+            "barcode": "17603366549580",
+            "name": "ABARIENTOS, James Carl C.",
+            "course": "Grade 7 - St. Philomena",
+            "course_year": "7",
+            "date": "2025-10-17",
+            "day": "Friday",
+            "time_in": "09:07:51",
+            "time_out": ""
         }
     ]
 }

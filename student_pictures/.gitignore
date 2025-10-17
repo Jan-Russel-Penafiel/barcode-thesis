@@ -1,0 +1,7 @@
+# Student pictures directory
+# This folder stores student profile pictures
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.webp

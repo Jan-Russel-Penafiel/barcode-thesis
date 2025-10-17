@@ -596,6 +596,36 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
             border: 1px solid #e5e7eb;
             border-radius: 6px;
             background: white;
+            max-height: 250px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        
+        /* Custom Scrollbar Styling */
+        #historyTableContainer::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        #historyTableContainer::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+            margin: 5px 0;
+        }
+        
+        #historyTableContainer::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+            transition: background 0.3s ease;
+        }
+        
+        #historyTableContainer::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        /* Firefox Scrollbar */
+        #historyTableContainer {
+            scrollbar-color: #cbd5e1 #f1f5f9;
+            scrollbar-width: thin;
         }
         
         .history-date-today {
@@ -704,6 +734,22 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                 font-size: 56px;
                 margin-bottom: 8px;
                 line-height: 1;
+                width: 60px;
+                height: 60px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: #f3f4f6;
+                border-radius: 4px;
+                flex-shrink: 0;
+                overflow: hidden;
+            }
+
+            .id-card-icon img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                border-radius: 2px;
             }
 
             .id-card-barcode-container img {
@@ -952,7 +998,35 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                                             </div>
                                         <?php endif; ?>
                                     </td>
-                                    <td class="py-3 px-6"><?php echo htmlspecialchars($record['name']); ?></td>
+                                    <td class="py-3 px-6">
+                                        <div style="display: flex; align-items: center; gap: 12px;">
+                                            <!-- Student Picture -->
+                                            <div style="width: 56px; height: 56px; border-radius: 6px; background: #f3f4f6; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 2px solid #e5e7eb; overflow: hidden;">
+                                                <?php
+                                                $picturePath = "student_pictures/{$record['barcode']}.jpg";
+                                                $picturePaths = [
+                                                    "student_pictures/{$record['barcode']}.jpg",
+                                                    "student_pictures/{$record['barcode']}.png",
+                                                    "student_pictures/{$record['barcode']}.gif",
+                                                    "student_pictures/{$record['barcode']}.webp"
+                                                ];
+                                                $pictureFound = false;
+                                                foreach ($picturePaths as $path) {
+                                                    if (file_exists($path)) {
+                                                        $pictureFound = true;
+                                                        echo '<img src="' . htmlspecialchars($path) . '" alt="' . htmlspecialchars($record['name']) . '" style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px;">';
+                                                        break;
+                                                    }
+                                                }
+                                                if (!$pictureFound) {
+                                                    echo '<span style="font-size: 28px;">👤</span>';
+                                                }
+                                                ?>
+                                            </div>
+                                            <!-- Student Name -->
+                                            <span><?php echo htmlspecialchars($record['name']); ?></span>
+                                        </div>
+                                    </td>
                                     <td class="py-3 px-6"><?php echo htmlspecialchars($record['course']); ?></td>
                                     <td class="py-3 px-6">
                                         <?php
@@ -1111,7 +1185,7 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                 </div>
                 <div class="id-card-content">
                     <div class="id-card-barcode-container">
-                        <div class="id-card-icon">👤</div>
+                        <div class="id-card-icon" id="printStudentPicture" style="width: 60px; height: 60px; margin: 0 auto 8px; border-radius: 4px; background: #f3f4f6; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;">👤</div>
                         <img id="printBarcodeImage" src="" alt="Barcode">
                     </div>
                     <div class="id-card-info">
@@ -1147,9 +1221,24 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                 <h3 style="font-size: 16px; font-weight: 600;">Attendance Details</h3>
             </div>
             <div id="viewContent">
-                <div class="view-barcode-container" style="margin-bottom: 10px;">
-                    <img id="viewBarcodeImage" class="view-barcode-image" src="" alt="Student Barcode" style="max-width: 180px; height: auto;">
-                    <div class="barcode-id" id="viewBarcodeId" style="font-size: 10px; margin-top: 4px;"></div>
+                <div style="display: flex; gap: 12px; margin-bottom: 12px; justify-content: center;">
+                    <!-- Barcode Section -->
+                    <div class="view-barcode-container" style="margin-bottom: 0; flex: 1;">
+                        <img id="viewBarcodeImage" class="view-barcode-image" src="" alt="Student Barcode" style="max-width: 80px; height: auto;">
+                        <div class="barcode-id" id="viewBarcodeId" style="font-size: 9px; margin-top: 2px;"></div>
+                    </div>
+                    
+                    <!-- Student Picture Section -->
+                    <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
+                        <div style="width: 100%; max-width: 70px; height: 70px; border: 2px solid #e5e7eb; border-radius: 6px; background: #f9fafb; display: flex; align-items: center; justify-content: center; margin-bottom: 6px; position: relative;">
+                            <img id="studentPicturePreview" src="" alt="Student Picture" style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px; display: none;">
+                            <div id="picturePlaceholder" style="color: #9ca3af; font-size: 18px;">📷</div>
+                        </div>
+                        <input type="file" id="studentPictureInput" accept="image/*" style="display: none;">
+                        <button type="button" id="uploadPictureBtn" class="bg-blue-500 text-white px-2 py-1 rounded text-xs hover:bg-blue-600" style="font-size: 10px;">
+                            📸 Insert
+                        </button>
+                    </div>
                 </div>
                 <div class="detail-row" style="padding: 4px 0; font-size: 13px;">
                     <span class="detail-label" style="font-weight: 600; color: #6b7280; min-width: 70px;">Name:</span>
@@ -1184,7 +1273,7 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
             <!-- Attendance History Section -->
             <div id="attendanceHistory" style="margin-top: 12px;">
                 <h4 style="color: #374151; margin-bottom: 8px; font-size: 13px; font-weight: 600; border-bottom: 1px solid #e5e7eb; padding-bottom: 4px;">📅 History</h4>
-                <div id="historyTableContainer" style="max-height: 180px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 4px;">
+                <div id="historyTableContainer">
                     <table class="min-w-full" id="historyTable" style="font-size: 11px;">
                         <thead class="bg-gray-100 sticky top-0">
                             <tr>
@@ -1391,6 +1480,25 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                 const dateStr = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
                 document.getElementById('printDate').textContent = `Issued: ${dateStr}`;
                 
+                // Handle student picture in print container
+                const printStudentPicture = document.getElementById('printStudentPicture');
+                const studentPicturePreview = document.getElementById('studentPicturePreview');
+                
+                if (studentPicturePreview.src && studentPicturePreview.style.display !== 'none') {
+                    // Clear previous content and set the image
+                    printStudentPicture.innerHTML = '';
+                    const img = document.createElement('img');
+                    img.src = studentPicturePreview.src;
+                    img.style.width = '100%';
+                    img.style.height = '100%';
+                    img.style.objectFit = 'cover';
+                    img.style.borderRadius = '2px';
+                    printStudentPicture.appendChild(img);
+                } else {
+                    // Show emoji icon if no picture
+                    printStudentPicture.innerHTML = '👤';
+                }
+                
                 // Show print container
                 const printContainer = document.getElementById('printContainer');
                 printContainer.classList.remove('id-card-print-hidden');
@@ -1504,6 +1612,9 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                 // Load attendance history for this student
                 await loadAttendanceHistory(data.barcode, todayDisplay);
                 
+                // Load student picture from server
+                loadStudentPicture(data.barcode);
+                
                 viewModal.style.display = 'flex';
             }
             
@@ -1543,23 +1654,22 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                     historyTableContainer.style.display = 'block';
                     noHistoryMessage.style.display = 'none';
                     
-                    // Get today's date and day
+                    // Get today's date for comparison
                     const today = new Date();
                     const todayDisplay = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
                     const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-                    const todayDay = dayNames[today.getDay()];
                     
                     // Build table rows
                     let historyHTML = '';
                     
                     studentHistory.forEach((record, index) => {
+                        // Display the actual record date, not today's date
                         const recordDate = new Date(record.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                        const recordDayIndex = new Date(record.date).getDay();
+                        const recordDay = dayNames[recordDayIndex];
+                        
                         const isToday = recordDate === currentDate || recordDate === todayDisplay;
                         const rowClass = isToday ? 'history-date-today' : '';
-                        
-                        // Display today's date and day for all records
-                        const displayDate = todayDisplay;
-                        const displayDay = todayDay;
                         
                         const timeInDisplay = record.time_in ? new Date('1970-01-01T' + record.time_in).toLocaleTimeString('en-US', {
                             hour: 'numeric',
@@ -1575,8 +1685,8 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                         
                         historyHTML += `
                             <tr class="${rowClass}" style="border-bottom: 1px solid #f3f4f6;">
-                                <td class="py-1 px-2 text-gray-700" style="font-size: 11px;">${displayDate}${isToday ? ' <span class="text-blue-600" style="font-size: 10px; font-weight: 600;">(Today)</span>' : ''}</td>
-                                <td class="py-1 px-2 text-gray-600" style="font-size: 11px;">${displayDay}</td>
+                                <td class="py-1 px-2 text-gray-700" style="font-size: 11px;">${recordDate}${isToday ? ' <span class="text-blue-600" style="font-size: 10px; font-weight: 600;">(Today)</span>' : ''}</td>
+                                <td class="py-1 px-2 text-gray-600" style="font-size: 11px;">${recordDay}</td>
                                 <td class="py-1 px-2 text-gray-700" style="font-size: 11px;">${timeInDisplay}</td>
                                 <td class="py-1 px-2 text-gray-700" style="font-size: 11px;">${timeOutDisplay}</td>
                             </tr>
@@ -1641,6 +1751,107 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                     printIDCard(barcodeId, name, course, year);
                 }
             });
+
+            // Student Picture Upload Handler
+            const uploadPictureBtn = document.getElementById('uploadPictureBtn');
+            const studentPictureInput = document.getElementById('studentPictureInput');
+            const studentPicturePreview = document.getElementById('studentPicturePreview');
+            const picturePlaceholder = document.getElementById('picturePlaceholder');
+            let currentStudentBarcode = '';
+            
+            uploadPictureBtn.addEventListener('click', () => {
+                studentPictureInput.click();
+            });
+            
+            studentPictureInput.addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (file && currentStudentBarcode) {
+                    // Show loading state
+                    uploadPictureBtn.disabled = true;
+                    uploadPictureBtn.textContent = '⏳ Uploading...';
+                    
+                    const formData = new FormData();
+                    formData.append('picture', file);
+                    formData.append('barcode', currentStudentBarcode);
+                    
+                    try {
+                        const response = await fetch('upload_student_picture.php', {
+                            method: 'POST',
+                            credentials: 'same-origin',
+                            body: formData
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (result.success) {
+                            // Update preview with server path
+                            studentPicturePreview.src = result.picture_url + '?t=' + new Date().getTime();
+                            studentPicturePreview.style.display = 'block';
+                            picturePlaceholder.style.display = 'none';
+                            
+                            // Update button text
+                            uploadPictureBtn.textContent = '📸 Picture Uploaded ✓';
+                            setTimeout(() => {
+                                uploadPictureBtn.textContent = '📸 Insert Picture';
+                            }, 2000);
+                        } else {
+                            alert('❌ Error: ' + result.message);
+                            uploadPictureBtn.textContent = '📸 Insert Picture';
+                        }
+                    } catch (error) {
+                        console.error('Upload error:', error);
+                        alert('❌ Failed to upload picture');
+                        uploadPictureBtn.textContent = '📸 Insert Picture';
+                    } finally {
+                        uploadPictureBtn.disabled = false;
+                        // Reset file input
+                        studentPictureInput.value = '';
+                    }
+                } else if (!currentStudentBarcode) {
+                    alert('⚠️ Please select a student first');
+                }
+            });
+            
+            // Load student picture from server when modal opens
+            function loadStudentPicture(barcode) {
+                currentStudentBarcode = barcode;
+                const picturePath = 'student_pictures/' + barcode + '.jpg';
+                const picturePathPng = 'student_pictures/' + barcode + '.png';
+                const picturePathGif = 'student_pictures/' + barcode + '.gif';
+                const picturePathWebp = 'student_pictures/' + barcode + '.webp';
+                
+                // Try to load the picture (it will fail if not found)
+                const img = new Image();
+                img.onload = () => {
+                    studentPicturePreview.src = img.src + '?t=' + new Date().getTime();
+                    studentPicturePreview.style.display = 'block';
+                    picturePlaceholder.style.display = 'none';
+                    uploadPictureBtn.textContent = '📸 Change Picture';
+                };
+                img.onerror = () => {
+                    // Try other formats
+                    fetch(picturePath, { method: 'HEAD' })
+                        .then(r => {
+                            if (r.ok) {
+                                studentPicturePreview.src = picturePath + '?t=' + new Date().getTime();
+                                studentPicturePreview.style.display = 'block';
+                                picturePlaceholder.style.display = 'none';
+                                uploadPictureBtn.textContent = '📸 Change Picture';
+                            } else {
+                                resetPictureDisplay();
+                            }
+                        })
+                        .catch(() => resetPictureDisplay());
+                };
+                img.src = picturePath;
+            }
+            
+            function resetPictureDisplay() {
+                studentPicturePreview.src = '';
+                studentPicturePreview.style.display = 'none';
+                picturePlaceholder.style.display = 'block';
+                uploadPictureBtn.textContent = '📸 Insert Picture';
+            }
 
             // Close modals when clicking outside
             barcodeModal.addEventListener('click', (e) => {
