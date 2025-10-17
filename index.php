@@ -628,6 +628,21 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
             scrollbar-width: thin;
         }
         
+        /* Student Picture Clickable */
+        .student-picture-clickable {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .student-picture-clickable:hover {
+            transform: scale(1.08);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+            border-color: #3b82f6 !important;
+        }
+        
+        .student-picture-clickable:active {
+            transform: scale(1.05);
+        }
+        
         .history-date-today {
             background-color: #dbeafe !important;
             font-weight: 600;
@@ -999,11 +1014,14 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                                         <?php endif; ?>
                                     </td>
                                     <td class="py-3 px-6">
-                                        <div style="display: flex; align-items: center; gap: 12px;">
-                                            <!-- Student Picture -->
-                                            <div style="width: 56px; height: 56px; border-radius: 6px; background: #f3f4f6; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 2px solid #e5e7eb; overflow: hidden;">
+                                        <div style="display: flex; align-items: center; gap: 16px;">
+                                            <!-- Student Picture (Larger) -->
+                                            <div class="student-picture-clickable" style="width: 96px; height: 96px; border-radius: 8px; background: #f3f4f6; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 2px solid #e5e7eb; overflow: hidden; cursor: pointer; transition: all 0.2s ease;"
+                                                 data-barcode="<?php echo htmlspecialchars($record['barcode']); ?>"
+                                                 data-name="<?php echo htmlspecialchars($record['name']); ?>"
+                                                 data-course="<?php echo htmlspecialchars($record['course']); ?>"
+                                                 data-course-year="<?php echo htmlspecialchars($record['course_year']); ?>">
                                                 <?php
-                                                $picturePath = "student_pictures/{$record['barcode']}.jpg";
                                                 $picturePaths = [
                                                     "student_pictures/{$record['barcode']}.jpg",
                                                     "student_pictures/{$record['barcode']}.png",
@@ -1014,17 +1032,20 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                                                 foreach ($picturePaths as $path) {
                                                     if (file_exists($path)) {
                                                         $pictureFound = true;
-                                                        echo '<img src="' . htmlspecialchars($path) . '" alt="' . htmlspecialchars($record['name']) . '" style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px;">';
+                                                        echo '<img src="' . htmlspecialchars($path) . '" alt="' . htmlspecialchars($record['name']) . '" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;" data-picture-path="' . htmlspecialchars($path) . '">';
                                                         break;
                                                     }
                                                 }
                                                 if (!$pictureFound) {
-                                                    echo '<span style="font-size: 28px;">👤</span>';
+                                                    echo '<span style="font-size: 44px;">👤</span>';
                                                 }
                                                 ?>
                                             </div>
                                             <!-- Student Name -->
-                                            <span><?php echo htmlspecialchars($record['name']); ?></span>
+                                            <div style="display:flex; flex-direction:column;">
+                                                <span style="font-weight:600; font-size:14px; line-height:1.1;"><?php echo htmlspecialchars($record['name']); ?></span>
+                                                <small style="color:#6b7280; font-size:12px;"><?php echo htmlspecialchars($record['course']); ?></small>
+                                            </div>
                                         </div>
                                     </td>
                                     <td class="py-3 px-6"><?php echo htmlspecialchars($record['course']); ?></td>
@@ -1167,6 +1188,26 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                 </button>
                 <button id="closeBarcodeModalBtn" class="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600 transition-colors">Close</button>
             </div>
+        </div>
+    </div>
+    
+    <!-- Student Picture Modal -->
+    <div id="pictureModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 10003; justify-content: center; align-items: center;">
+        <div style="background: white; padding: 30px; border-radius: 12px; width: 90%; max-width: 500px; text-align: center; position: relative;">
+            <button id="closePictureModal" style="position: absolute; top: 10px; right: 15px; font-size: 24px; cursor: pointer; background: none; border: none; color: #666;">
+                &times;
+            </button>
+            <h3 style="font-size: 18px; font-weight: 600; color: #374151; margin-bottom: 8px;">Student Picture</h3>
+            <div style="margin-bottom: 16px;">
+                <small style="color: #6b7280; font-size: 12px;" id="pictureModalBarcode"></small>
+            </div>
+            <img id="enlargedPicture" style="max-width: 100%; max-height: 400px; border-radius: 8px; border: 2px solid #e5e7eb; display: block; margin: 0 auto;" src="" alt="Student Picture">
+            <div style="margin-top: 16px; text-align: left;">
+                <p style="margin-bottom: 6px; color: #374151;"><strong>Name:</strong> <span id="pictureModalName" style="color: #6b7280;"></span></p>
+                <p style="margin-bottom: 6px; color: #374151;"><strong>Strand:</strong> <span id="pictureModalCourse" style="color: #6b7280;"></span></p>
+                <p style="color: #374151;"><strong>Year:</strong> <span id="pictureModalYear" style="color: #6b7280;"></span></p>
+            </div>
+            <button id="closePictureModalBtn" style="margin-top: 16px; background-color: #6b7280; color: white; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">Close</button>
         </div>
     </div>
     
@@ -1466,6 +1507,52 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                 barcodeModal.style.display = 'none';
                 currentModalBarcodeId = '';
             }
+            
+            // Picture modal elements and functions
+            const pictureModal = document.getElementById('pictureModal');
+            const closePictureModal = document.getElementById('closePictureModal');
+            const closePictureModalBtn = document.getElementById('closePictureModalBtn');
+            const enlargedPicture = document.getElementById('enlargedPicture');
+            
+            function openPictureModal(imageSrc, barcode, name, course, year) {
+                document.getElementById('pictureModalName').textContent = name;
+                document.getElementById('pictureModalCourse').textContent = course;
+                document.getElementById('pictureModalYear').textContent = year;
+                document.getElementById('pictureModalBarcode').textContent = 'ID: ' + barcode;
+                enlargedPicture.src = imageSrc;
+                pictureModal.style.display = 'flex';
+            }
+            
+            function closePictureModalFunc() {
+                pictureModal.style.display = 'none';
+            }
+            
+            closePictureModal.addEventListener('click', closePictureModalFunc);
+            closePictureModalBtn.addEventListener('click', closePictureModalFunc);
+            
+            // Close picture modal when clicking outside
+            pictureModal.addEventListener('click', (e) => {
+                if (e.target === pictureModal) {
+                    closePictureModalFunc();
+                }
+            });
+            
+            // Picture thumbnail click handlers
+            document.addEventListener('click', (e) => {
+                const pictureContainer = e.target.closest('.student-picture-clickable');
+                if (pictureContainer) {
+                    const barcode = pictureContainer.dataset.barcode;
+                    const name = pictureContainer.dataset.name;
+                    const course = pictureContainer.dataset.course;
+                    const year = pictureContainer.dataset['courseYear'];
+                    
+                    // Get the image path from the img tag if it exists
+                    const img = pictureContainer.querySelector('img');
+                    if (img && img.src) {
+                        openPictureModal(img.src, barcode, name, course, year);
+                    }
+                }
+            });
             
             // Print ID Card function
             function printIDCard(barcodeId, name, course, year) {
