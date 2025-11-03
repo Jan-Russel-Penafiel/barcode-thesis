@@ -2271,6 +2271,470 @@
             "course_year": "12",
             "gender": "Male",
             "strand": "EIM"
+        },
+        {
+            "barcode": "17621543452728",
+            "name": "ABRASADO, Leiahn Jake D.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "gender": "Male",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543469783",
+            "name": "BANQUIAO, Justin Dean G.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "gender": "Male",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543462825",
+            "name": "BASINDANAN, Kent Aeroll G.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "gender": "Male",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543462308",
+            "name": "CANJA, Jun-Jun D.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "gender": "Male",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543465817",
+            "name": "DASMARI\u00d1AS, Andrei Rafael G.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "gender": "Male",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543466795",
+            "name": "GOMEZ, Harry Louise G.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "gender": "Male",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543468815",
+            "name": "MILLAN, John Carl B.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "gender": "Male",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543464722",
+            "name": "ORO, Adrian Klerk L.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "gender": "Male",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543463730",
+            "name": "PANES, Jhon Laurence V.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "gender": "Male",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543465059",
+            "name": "PARRE\u00d1O, Donnie L.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "gender": "Male",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543478510",
+            "name": "PE\u00d1AFIEL, Jerico Jr. P.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "gender": "Male",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543474576",
+            "name": "PINEDA, MJ M.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "gender": "Male",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543473944",
+            "name": "TUARDON, John Seph D.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "gender": "Male",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543474276",
+            "name": "UDANI, Rafael Renz C.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "gender": "Male",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543473540",
+            "name": "ALABADO, Raincy Vhone B.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "gender": "Female",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543472821",
+            "name": "BUENAFLOR, Princess Grace T.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "gender": "Female",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543475570",
+            "name": "CAUBAY, Aleah Shane C.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "gender": "Female",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543471002",
+            "name": "DEMO, Annie Rose C.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "gender": "Female",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543479186",
+            "name": "DOLLERO, Princess Anna May A.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "gender": "Female",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543488055",
+            "name": "ELISEO, Crisalin Lonafe L.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "gender": "Female",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543489690",
+            "name": "LAWAN, Farhaina D.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "gender": "Female",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543489916",
+            "name": "LAWAN, Farhana D.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "gender": "Female",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543489887",
+            "name": "LIBO-ON, Rochelle A.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "gender": "Female",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543485442",
+            "name": "NONO, Johana Mae P.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "gender": "Female",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543481256",
+            "name": "PAWAON, Jandi A.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "gender": "Female",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543481408",
+            "name": "ROMULO, Lea Marie Angel F.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "gender": "Female",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543512868",
+            "name": "ARE, Gian Carlo P.",
+            "course": "Grade 12 - HUMSS",
+            "course_year": "12",
+            "gender": "Male",
+            "strand": "HUMSS"
+        },
+        {
+            "barcode": "17621543518747",
+            "name": "DALL, Khile Amir P.",
+            "course": "Grade 12 - HUMSS",
+            "course_year": "12",
+            "gender": "Male",
+            "strand": "HUMSS"
+        },
+        {
+            "barcode": "17621543517139",
+            "name": "DARULLO, Jayson C.",
+            "course": "Grade 12 - HUMSS",
+            "course_year": "12",
+            "gender": "Male",
+            "strand": "HUMSS"
+        },
+        {
+            "barcode": "17621543516685",
+            "name": "GARCIA, Raman Jr. P.",
+            "course": "Grade 12 - HUMSS",
+            "course_year": "12",
+            "gender": "Male",
+            "strand": "HUMSS"
+        },
+        {
+            "barcode": "17621543516576",
+            "name": "MILLAN, John Aleris B.",
+            "course": "Grade 12 - HUMSS",
+            "course_year": "12",
+            "gender": "Male",
+            "strand": "HUMSS"
+        },
+        {
+            "barcode": "17621543512821",
+            "name": "CARANTO, Julie Mae B.",
+            "course": "Grade 12 - HUMSS",
+            "course_year": "12",
+            "gender": "Female",
+            "strand": "HUMSS"
+        },
+        {
+            "barcode": "17621543513662",
+            "name": "COLON, Angel Ann O.",
+            "course": "Grade 12 - HUMSS",
+            "course_year": "12",
+            "gender": "Female",
+            "strand": "HUMSS"
+        },
+        {
+            "barcode": "17621543519447",
+            "name": "DELA CRUZ, Mikaela Bless L.",
+            "course": "Grade 12 - HUMSS",
+            "course_year": "12",
+            "gender": "Female",
+            "strand": "HUMSS"
+        },
+        {
+            "barcode": "17621543523188",
+            "name": "DOLOJO, Nekallyn P.",
+            "course": "Grade 12 - HUMSS",
+            "course_year": "12",
+            "gender": "Female",
+            "strand": "HUMSS"
+        },
+        {
+            "barcode": "17621543526151",
+            "name": "GENTISON, June Claire N.",
+            "course": "Grade 12 - HUMSS",
+            "course_year": "12",
+            "gender": "Female",
+            "strand": "HUMSS"
+        },
+        {
+            "barcode": "17621543522261",
+            "name": "GUMBAO, Kate Ashley L.",
+            "course": "Grade 12 - HUMSS",
+            "course_year": "12",
+            "gender": "Female",
+            "strand": "HUMSS"
+        },
+        {
+            "barcode": "17621543528192",
+            "name": "MAGSIPOC, Precious Phink D.",
+            "course": "Grade 12 - HUMSS",
+            "course_year": "12",
+            "gender": "Female",
+            "strand": "HUMSS"
+        },
+        {
+            "barcode": "17621543522305",
+            "name": "PEDRAL, Josephine A.",
+            "course": "Grade 12 - HUMSS",
+            "course_year": "12",
+            "gender": "Female",
+            "strand": "HUMSS"
+        },
+        {
+            "barcode": "17621543525751",
+            "name": "ROSAREAL, Aicie Joy S.",
+            "course": "Grade 12 - HUMSS",
+            "course_year": "12",
+            "gender": "Female",
+            "strand": "HUMSS"
+        },
+        {
+            "barcode": "17621543521156",
+            "name": "YSON, Jolly Vhanne P.",
+            "course": "Grade 12 - HUMSS",
+            "course_year": "12",
+            "gender": "Female",
+            "strand": "HUMSS"
+        },
+        {
+            "barcode": "17621543576258",
+            "name": "GALAY, Nathaniel John B.",
+            "course": "Grade 12 - ICT",
+            "course_year": "12",
+            "gender": "Male",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543572104",
+            "name": "GOMEZ, Al Muqeet S.",
+            "course": "Grade 12 - ICT",
+            "course_year": "12",
+            "gender": "Male",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543573570",
+            "name": "LEBAQUIN, Loui Jhon Raff O.",
+            "course": "Grade 12 - ICT",
+            "course_year": "12",
+            "gender": "Male",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543572666",
+            "name": "LUMATAO, Daniel Jay C.",
+            "course": "Grade 12 - ICT",
+            "course_year": "12",
+            "gender": "Male",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543578897",
+            "name": "MAMASALANANG, Datu Lowrence A.",
+            "course": "Grade 12 - ICT",
+            "course_year": "12",
+            "gender": "Male",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543572923",
+            "name": "MANALOTO, Ron Victor L.",
+            "course": "Grade 12 - ICT",
+            "course_year": "12",
+            "gender": "Male",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543583086",
+            "name": "MARZO, Abdul Rajib S.",
+            "course": "Grade 12 - ICT",
+            "course_year": "12",
+            "gender": "Male",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543582950",
+            "name": "NAMOC, Milton James D.",
+            "course": "Grade 12 - ICT",
+            "course_year": "12",
+            "gender": "Male",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543587842",
+            "name": "VILLAVER, Gerald M.",
+            "course": "Grade 12 - ICT",
+            "course_year": "12",
+            "gender": "Male",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543588597",
+            "name": "AGLUBO, Honey Princess A.",
+            "course": "Grade 12 - ICT",
+            "course_year": "12",
+            "gender": "Female",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543583556",
+            "name": "ARPOCIA, Jessica F.",
+            "course": "Grade 12 - ICT",
+            "course_year": "12",
+            "gender": "Female",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543587198",
+            "name": "LAGARDE, Angel Faith E.",
+            "course": "Grade 12 - ICT",
+            "course_year": "12",
+            "gender": "Female",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543581630",
+            "name": "MANTAWIL, Elijean B.",
+            "course": "Grade 12 - ICT",
+            "course_year": "12",
+            "gender": "Female",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543581975",
+            "name": "MITMUG, Injiel Fatmah M.",
+            "course": "Grade 12 - ICT",
+            "course_year": "12",
+            "gender": "Female",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543588214",
+            "name": "SALES, Shaima'a S.",
+            "course": "Grade 12 - ICT",
+            "course_year": "12",
+            "gender": "Female",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543591920",
+            "name": "SANDOVAL, Leam P.",
+            "course": "Grade 12 - ICT",
+            "course_year": "12",
+            "gender": "Female",
+            "strand": "ICT"
+        },
+        {
+            "barcode": "17621543595996",
+            "name": "SENDIANG, Precious C.",
+            "course": "Grade 12 - ICT",
+            "course_year": "12",
+            "gender": "Female",
+            "strand": "ICT"
         }
     ],
     "attendance": [
@@ -5393,6 +5857,586 @@
             "day": "Friday",
             "time_in": "09:07:51",
             "time_out": ""
+        },
+        {
+            "barcode": "17621543452728",
+            "name": "ABRASADO, Leiahn Jake D.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543469783",
+            "name": "BANQUIAO, Justin Dean G.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543462825",
+            "name": "BASINDANAN, Kent Aeroll G.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543462308",
+            "name": "CANJA, Jun-Jun D.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543465817",
+            "name": "DASMARI\u00d1AS, Andrei Rafael G.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543466795",
+            "name": "GOMEZ, Harry Louise G.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543468815",
+            "name": "MILLAN, John Carl B.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543464722",
+            "name": "ORO, Adrian Klerk L.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543463730",
+            "name": "PANES, Jhon Laurence V.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543465059",
+            "name": "PARRE\u00d1O, Donnie L.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543478510",
+            "name": "PE\u00d1AFIEL, Jerico Jr. P.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543474576",
+            "name": "PINEDA, MJ M.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543473944",
+            "name": "TUARDON, John Seph D.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543474276",
+            "name": "UDANI, Rafael Renz C.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543473540",
+            "name": "ALABADO, Raincy Vhone B.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543472821",
+            "name": "BUENAFLOR, Princess Grace T.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543475570",
+            "name": "CAUBAY, Aleah Shane C.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543471002",
+            "name": "DEMO, Annie Rose C.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543479186",
+            "name": "DOLLERO, Princess Anna May A.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543488055",
+            "name": "ELISEO, Crisalin Lonafe L.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543489690",
+            "name": "LAWAN, Farhaina D.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543489916",
+            "name": "LAWAN, Farhana D.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543489887",
+            "name": "LIBO-ON, Rochelle A.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543485442",
+            "name": "NONO, Johana Mae P.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543481256",
+            "name": "PAWAON, Jandi A.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543481408",
+            "name": "ROMULO, Lea Marie Angel F.",
+            "course": "Grade 11 - ICT",
+            "course_year": "11",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543512868",
+            "name": "ARE, Gian Carlo P.",
+            "course": "Grade 12 - HUMSS",
+            "course_year": "12",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543518747",
+            "name": "DALL, Khile Amir P.",
+            "course": "Grade 12 - HUMSS",
+            "course_year": "12",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543517139",
+            "name": "DARULLO, Jayson C.",
+            "course": "Grade 12 - HUMSS",
+            "course_year": "12",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543516685",
+            "name": "GARCIA, Raman Jr. P.",
+            "course": "Grade 12 - HUMSS",
+            "course_year": "12",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543516576",
+            "name": "MILLAN, John Aleris B.",
+            "course": "Grade 12 - HUMSS",
+            "course_year": "12",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543512821",
+            "name": "CARANTO, Julie Mae B.",
+            "course": "Grade 12 - HUMSS",
+            "course_year": "12",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543513662",
+            "name": "COLON, Angel Ann O.",
+            "course": "Grade 12 - HUMSS",
+            "course_year": "12",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543519447",
+            "name": "DELA CRUZ, Mikaela Bless L.",
+            "course": "Grade 12 - HUMSS",
+            "course_year": "12",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543523188",
+            "name": "DOLOJO, Nekallyn P.",
+            "course": "Grade 12 - HUMSS",
+            "course_year": "12",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543526151",
+            "name": "GENTISON, June Claire N.",
+            "course": "Grade 12 - HUMSS",
+            "course_year": "12",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543522261",
+            "name": "GUMBAO, Kate Ashley L.",
+            "course": "Grade 12 - HUMSS",
+            "course_year": "12",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543528192",
+            "name": "MAGSIPOC, Precious Phink D.",
+            "course": "Grade 12 - HUMSS",
+            "course_year": "12",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543522305",
+            "name": "PEDRAL, Josephine A.",
+            "course": "Grade 12 - HUMSS",
+            "course_year": "12",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543525751",
+            "name": "ROSAREAL, Aicie Joy S.",
+            "course": "Grade 12 - HUMSS",
+            "course_year": "12",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543521156",
+            "name": "YSON, Jolly Vhanne P.",
+            "course": "Grade 12 - HUMSS",
+            "course_year": "12",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543576258",
+            "name": "GALAY, Nathaniel John B.",
+            "course": "Grade 12 - ICT",
+            "course_year": "12",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543572104",
+            "name": "GOMEZ, Al Muqeet S.",
+            "course": "Grade 12 - ICT",
+            "course_year": "12",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543573570",
+            "name": "LEBAQUIN, Loui Jhon Raff O.",
+            "course": "Grade 12 - ICT",
+            "course_year": "12",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543572666",
+            "name": "LUMATAO, Daniel Jay C.",
+            "course": "Grade 12 - ICT",
+            "course_year": "12",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543578897",
+            "name": "MAMASALANANG, Datu Lowrence A.",
+            "course": "Grade 12 - ICT",
+            "course_year": "12",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543572923",
+            "name": "MANALOTO, Ron Victor L.",
+            "course": "Grade 12 - ICT",
+            "course_year": "12",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543583086",
+            "name": "MARZO, Abdul Rajib S.",
+            "course": "Grade 12 - ICT",
+            "course_year": "12",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543582950",
+            "name": "NAMOC, Milton James D.",
+            "course": "Grade 12 - ICT",
+            "course_year": "12",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543587842",
+            "name": "VILLAVER, Gerald M.",
+            "course": "Grade 12 - ICT",
+            "course_year": "12",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543588597",
+            "name": "AGLUBO, Honey Princess A.",
+            "course": "Grade 12 - ICT",
+            "course_year": "12",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543583556",
+            "name": "ARPOCIA, Jessica F.",
+            "course": "Grade 12 - ICT",
+            "course_year": "12",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543587198",
+            "name": "LAGARDE, Angel Faith E.",
+            "course": "Grade 12 - ICT",
+            "course_year": "12",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543581630",
+            "name": "MANTAWIL, Elijean B.",
+            "course": "Grade 12 - ICT",
+            "course_year": "12",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543581975",
+            "name": "MITMUG, Injiel Fatmah M.",
+            "course": "Grade 12 - ICT",
+            "course_year": "12",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543588214",
+            "name": "SALES, Shaima'a S.",
+            "course": "Grade 12 - ICT",
+            "course_year": "12",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543591920",
+            "name": "SANDOVAL, Leam P.",
+            "course": "Grade 12 - ICT",
+            "course_year": "12",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
+        },
+        {
+            "barcode": "17621543595996",
+            "name": "SENDIANG, Precious C.",
+            "course": "Grade 12 - ICT",
+            "course_year": "12",
+            "date": "2025-11-03",
+            "day": "Monday",
+            "time_in": null,
+            "time_out": null
         }
     ]
 }
