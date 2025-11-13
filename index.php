@@ -139,6 +139,8 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
     <title>Dashboard - Barcode Attendance</title>
     <link href="tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         #deleteModal, #errorModal {
             display: none;
@@ -682,6 +684,9 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                 margin: 0;
                 padding: 0;
                 box-sizing: border-box;
+                -webkit-print-color-adjust: exact !important;
+                color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
 
             html, body {
@@ -1427,7 +1432,7 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
             
             <div class="modal-buttons" style="margin-top: 12px;">
                 <button id="printDetailsBarcodeBtn" class="print-button" style="margin-right: auto;">
-                    🖨️ Print ID Card
+                    📄 Download PDF ID Card
                 </button>
                 <button id="closeViewModal" class="bg-gray-500 text-white px-3 py-1.5 rounded text-sm hover:bg-gray-600">Close</button>
             </div>
@@ -1645,7 +1650,7 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                 }
             });
             
-            // Print ID Card function
+            // Print ID Card function - Generate and Download PDF
             function printIDCard(barcodeId, name, course, year) {
                 // Populate print container with data
                 document.getElementById('printBarcodeImage').src = `barcodes/${barcodeId}.png`;
@@ -1678,19 +1683,77 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                     printStudentPicture.innerHTML = '👤';
                 }
                 
-                // Show print container
+                // Show print container temporarily for PDF generation
                 const printContainer = document.getElementById('printContainer');
                 printContainer.classList.remove('id-card-print-hidden');
+                printContainer.style.position = 'absolute';
+                printContainer.style.top = '-9999px';
+                printContainer.style.left = '-9999px';
                 
-                // Trigger print dialog
-                setTimeout(() => {
-                    window.print();
-                    
-                    // Hide print container after print
-                    setTimeout(() => {
+                // Wait for image to load, then generate PDF
+                const barcodeImg = document.getElementById('printBarcodeImage');
+                const generatePDF = async () => {
+                    try {
+                        // Get the ID card element
+                        const idCard = document.querySelector('.id-card-print');
+                        
+                        // Use html2canvas to convert the ID card to canvas
+                        const canvas = await html2canvas(idCard, {
+                            scale: 3, // High resolution for better quality
+                            backgroundColor: '#ffffff',
+                            logging: false,
+                            useCORS: true,
+                            allowTaint: true,
+                            foreignObjectRendering: true,
+                            imageTimeout: 15000,
+                            removeContainer: false
+                        });
+                        
+                        // Create jsPDF instance with ID card dimensions
+                        const { jsPDF } = window.jspdf;
+                        const pdf = new jsPDF({
+                            orientation: 'landscape',
+                            unit: 'in',
+                            format: [3.5, 2.25] // ID card size
+                        });
+                        
+                        // Calculate dimensions to fit the canvas in PDF
+                        const imgWidth = 3.5;
+                        const imgHeight = 2.25;
+                        
+                        // Convert canvas to image and add to PDF
+                        const imgData = canvas.toDataURL('image/jpeg', 1.0);
+                        pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
+                        
+                        // Generate filename with student name and ID
+                        const fileName = `StudentID_${name.replace(/[^a-zA-Z0-9]/g, '_')}_${barcodeId}.pdf`;
+                        
+                        // Download the PDF
+                        pdf.save(fileName);
+                        
+                        // Show success message
+                        console.log('PDF generated successfully:', fileName);
+                        
+                    } catch (error) {
+                        console.error('Error generating PDF:', error);
+                        alert('Error generating PDF. Please try again.');
+                    } finally {
+                        // Hide print container
                         printContainer.classList.add('id-card-print-hidden');
-                    }, 500);
-                }, 100);
+                        printContainer.style.position = '';
+                        printContainer.style.top = '';
+                        printContainer.style.left = '';
+                    }
+                };
+                
+                // Check if barcode image is already loaded
+                if (barcodeImg.complete && barcodeImg.naturalHeight !== 0) {
+                    setTimeout(generatePDF, 100);
+                } else {
+                    // Wait for barcode image to load
+                    barcodeImg.onload = () => setTimeout(generatePDF, 100);
+                    barcodeImg.onerror = () => setTimeout(generatePDF, 100);
+                }
             }
             
             // Handle Time In / Time Out selection in modal
