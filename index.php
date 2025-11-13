@@ -694,14 +694,18 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
             }
 
             .print-container {
-                width: 100%;
-                min-height: 100vh;
+                width: 100vw;
+                height: 100vh;
                 display: flex !important;
                 align-items: center;
                 justify-content: center;
                 page-break-after: avoid;
                 margin: 0;
-                padding: 0;
+                padding: 20px;
+                box-sizing: border-box;
+                position: absolute;
+                top: 0;
+                left: 0;
             }
 
             .id-card-print {
@@ -736,13 +740,26 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
 
             .id-card-content {
                 display: flex;
-                gap: 8px;
-                align-items: flex-start;
+                flex-direction: column;
+                gap: 12px;
+                align-items: center;
             }
 
             .id-card-barcode-container {
                 flex-shrink: 0;
                 text-align: center;
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .id-card-student-info {
+                display: flex;
+                gap: 8px;
+                align-items: flex-start;
+                width: 100%;
             }
 
             .id-card-icon {
@@ -768,8 +785,14 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
             }
 
             .id-card-barcode-container img {
-                max-width: 0.8in;
+                max-width: 2.5in;
+                min-width: 2in;
                 height: auto;
+                border: 1px solid #333;
+                background: white;
+                padding: 4px;
+                display: block;
+                margin: 0 auto;
             }
 
             .id-card-info {
@@ -835,6 +858,68 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
 
         .print-button:active {
             transform: scale(0.98);
+        }
+
+        /* Picture Upload Button Styles */
+        #uploadPictureBtn {
+            transition: all 0.3s ease;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+        }
+
+        #uploadPictureBtn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+        }
+
+        #uploadPictureBtn:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 2px rgba(59, 130, 246, 0.2);
+        }
+
+        #uploadPictureBtn:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Student Picture Preview Styles */
+        #studentPicturePreview {
+            transition: all 0.3s ease;
+        }
+
+        #studentPicturePreview:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Picture Placeholder Styles */
+        #picturePlaceholder {
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+
+        /* Animation for picture update */
+        .picture-updated {
+            animation: pictureUpdatePulse 1s ease-in-out;
+            border-color: #10b981 !important;
+        }
+
+        @keyframes pictureUpdatePulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+            }
         }
     </style>
 </head>
@@ -1225,26 +1310,32 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                     <h2>STUDENT ID CARD</h2>
                 </div>
                 <div class="id-card-content">
+                    <!-- Primary Barcode Section for Scanning -->
                     <div class="id-card-barcode-container">
-                        <div class="id-card-icon" id="printStudentPicture" style="width: 60px; height: 60px; margin: 0 auto 8px; border-radius: 4px; background: #f3f4f6; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;">👤</div>
-                        <img id="printBarcodeImage" src="" alt="Barcode">
+                        <img id="printBarcodeImage" src="" alt="Student Barcode">
+                        <div style="margin-top: 6px; font-family: 'Courier New', monospace; font-size: 11px; font-weight: bold; color: #333;" id="printBarcodeIdText"></div>
                     </div>
-                    <div class="id-card-info">
-                        <div class="id-card-info-row">
-                            <span class="id-card-info-label">ID:</span>
-                            <span class="id-card-info-value" id="printBarcodeId"></span>
-                        </div>
-                        <div class="id-card-info-row">
-                            <span class="id-card-info-label">Name:</span>
-                            <span class="id-card-info-value" id="printName"></span>
-                        </div>
-                        <div class="id-card-info-row">
-                            <span class="id-card-info-label">Strand:</span>
-                            <span class="id-card-info-value" id="printStrand"></span>
-                        </div>
-                        <div class="id-card-info-row">
-                            <span class="id-card-info-label">Year:</span>
-                            <span class="id-card-info-value" id="printYear"></span>
+                    
+                    <!-- Student Information Section -->
+                    <div class="id-card-student-info">
+                        <div class="id-card-icon" id="printStudentPicture" style="width: 60px; height: 60px; border-radius: 4px; background: #f3f4f6; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;">👤</div>
+                        <div class="id-card-info">
+                            <div class="id-card-info-row">
+                                <span class="id-card-info-label">ID:</span>
+                                <span class="id-card-info-value" id="printBarcodeId"></span>
+                            </div>
+                            <div class="id-card-info-row">
+                                <span class="id-card-info-label">Name:</span>
+                                <span class="id-card-info-value" id="printName"></span>
+                            </div>
+                            <div class="id-card-info-row">
+                                <span class="id-card-info-label">Strand:</span>
+                                <span class="id-card-info-value" id="printStrand"></span>
+                            </div>
+                            <div class="id-card-info-row">
+                                <span class="id-card-info-label">Year:</span>
+                                <span class="id-card-info-value" id="printYear"></span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1559,6 +1650,7 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                 // Populate print container with data
                 document.getElementById('printBarcodeImage').src = `barcodes/${barcodeId}.png`;
                 document.getElementById('printBarcodeId').textContent = barcodeId;
+                document.getElementById('printBarcodeIdText').textContent = barcodeId;
                 document.getElementById('printName').textContent = name;
                 document.getElementById('printStrand').textContent = course;
                 document.getElementById('printYear').textContent = year;
@@ -1853,6 +1945,23 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
             studentPictureInput.addEventListener('change', async (e) => {
                 const file = e.target.files[0];
                 if (file && currentStudentBarcode) {
+                    // Validate file type before upload
+                    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+                    const fileType = file.type.toLowerCase();
+                    
+                    if (!allowedTypes.includes(fileType)) {
+                        alert('❌ Please select a valid image file (JPG, PNG, GIF, WEBP)');
+                        studentPictureInput.value = '';
+                        return;
+                    }
+                    
+                    // Validate file size (max 5MB)
+                    if (file.size > 5 * 1024 * 1024) {
+                        alert('❌ File size must be less than 5MB');
+                        studentPictureInput.value = '';
+                        return;
+                    }
+                    
                     // Show loading state
                     uploadPictureBtn.disabled = true;
                     uploadPictureBtn.textContent = '⏳ Uploading...';
@@ -1868,27 +1977,38 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                             body: formData
                         });
                         
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        
                         const result = await response.json();
                         
                         if (result.success) {
                             // Update preview with server path
-                            studentPicturePreview.src = result.picture_url + '?t=' + new Date().getTime();
+                            const imageUrl = result.picture_url + '?t=' + new Date().getTime();
+                            studentPicturePreview.src = imageUrl;
                             studentPicturePreview.style.display = 'block';
                             picturePlaceholder.style.display = 'none';
                             
                             // Update button text
-                            uploadPictureBtn.textContent = '📸 Picture Uploaded ✓';
+                            uploadPictureBtn.textContent = '✅ Picture Updated!';
+                            uploadPictureBtn.style.backgroundColor = '#10b981';
+                            
+                            // Reset button after 3 seconds
                             setTimeout(() => {
-                                uploadPictureBtn.textContent = '📸 Insert Picture';
-                            }, 2000);
+                                uploadPictureBtn.textContent = '📸 Change Picture';
+                                uploadPictureBtn.style.backgroundColor = '#3b82f6';
+                            }, 3000);
+                            
+                            // Also update any existing picture thumbnails in the main table
+                            updateTablePictureThumbnail(currentStudentBarcode, imageUrl);
+                            
                         } else {
-                            alert('❌ Error: ' + result.message);
-                            uploadPictureBtn.textContent = '📸 Insert Picture';
+                            alert('❌ Error: ' + (result.message || 'Upload failed'));
                         }
                     } catch (error) {
                         console.error('Upload error:', error);
-                        alert('❌ Failed to upload picture');
-                        uploadPictureBtn.textContent = '📸 Insert Picture';
+                        alert('❌ Failed to upload picture. Please try again.');
                     } finally {
                         uploadPictureBtn.disabled = false;
                         // Reset file input
@@ -1899,38 +2019,86 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                 }
             });
             
+            // Helper function to update picture thumbnails in the main table
+            function updateTablePictureThumbnail(barcode, imageUrl) {
+                // Find all picture containers in the main table that match this barcode
+                const pictureContainers = document.querySelectorAll(`.student-picture-clickable[data-barcode="${barcode}"]`);
+                
+                pictureContainers.forEach(container => {
+                    // Check if there's already an img element
+                    let img = container.querySelector('img');
+                    
+                    if (img) {
+                        // Update existing image
+                        img.src = imageUrl;
+                        img.style.display = 'block';
+                        img.setAttribute('data-picture-path', imageUrl);
+                    } else {
+                        // Remove placeholder (if exists) and create new image
+                        const placeholder = container.querySelector('span');
+                        if (placeholder) {
+                            placeholder.remove();
+                        }
+                        
+                        // Create new image element
+                        img = document.createElement('img');
+                        img.src = imageUrl;
+                        img.alt = container.getAttribute('data-name') || 'Student Picture';
+                        img.style.cssText = 'width: 100%; height: 100%; object-fit: cover; border-radius: 6px;';
+                        img.setAttribute('data-picture-path', imageUrl);
+                        container.appendChild(img);
+                    }
+                    
+                    // Add visual feedback animation
+                    container.classList.add('picture-updated');
+                    setTimeout(() => {
+                        container.classList.remove('picture-updated');
+                    }, 1000);
+                });
+                
+                console.log(`Updated ${pictureContainers.length} picture thumbnail(s) for barcode ${barcode}`);
+            }
+            
             // Load student picture from server when modal opens
             function loadStudentPicture(barcode) {
                 currentStudentBarcode = barcode;
-                const picturePath = 'student_pictures/' + barcode + '.jpg';
-                const picturePathPng = 'student_pictures/' + barcode + '.png';
-                const picturePathGif = 'student_pictures/' + barcode + '.gif';
-                const picturePathWebp = 'student_pictures/' + barcode + '.webp';
                 
-                // Try to load the picture (it will fail if not found)
-                const img = new Image();
-                img.onload = () => {
-                    studentPicturePreview.src = img.src + '?t=' + new Date().getTime();
-                    studentPicturePreview.style.display = 'block';
-                    picturePlaceholder.style.display = 'none';
-                    uploadPictureBtn.textContent = '📸 Change Picture';
+                // Reset display first
+                resetPictureDisplay();
+                
+                // Try to load different image formats
+                const imageFormats = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+                let imageFound = false;
+                
+                const tryNextFormat = (index) => {
+                    if (index >= imageFormats.length) {
+                        // No image found, keep default display
+                        return;
+                    }
+                    
+                    const format = imageFormats[index];
+                    const picturePath = `student_pictures/${barcode}.${format}`;
+                    
+                    // Create a new image to test if it exists
+                    const testImg = new Image();
+                    testImg.onload = () => {
+                        if (!imageFound) {
+                            imageFound = true;
+                            studentPicturePreview.src = picturePath + '?t=' + new Date().getTime();
+                            studentPicturePreview.style.display = 'block';
+                            picturePlaceholder.style.display = 'none';
+                            uploadPictureBtn.textContent = '📸 Change Picture';
+                        }
+                    };
+                    testImg.onerror = () => {
+                        // Try next format
+                        tryNextFormat(index + 1);
+                    };
+                    testImg.src = picturePath;
                 };
-                img.onerror = () => {
-                    // Try other formats
-                    fetch(picturePath, { method: 'HEAD' })
-                        .then(r => {
-                            if (r.ok) {
-                                studentPicturePreview.src = picturePath + '?t=' + new Date().getTime();
-                                studentPicturePreview.style.display = 'block';
-                                picturePlaceholder.style.display = 'none';
-                                uploadPictureBtn.textContent = '📸 Change Picture';
-                            } else {
-                                resetPictureDisplay();
-                            }
-                        })
-                        .catch(() => resetPictureDisplay());
-                };
-                img.src = picturePath;
+                
+                // Start trying different formats
+                tryNextFormat(0);
             }
             
             function resetPictureDisplay() {
@@ -1938,6 +2106,8 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                 studentPicturePreview.style.display = 'none';
                 picturePlaceholder.style.display = 'block';
                 uploadPictureBtn.textContent = '📸 Insert Picture';
+                uploadPictureBtn.style.backgroundColor = '#3b82f6';
+                uploadPictureBtn.disabled = false;
             }
 
             // Close modals when clicking outside
