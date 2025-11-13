@@ -5,6 +5,199 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     exit();
 }
 
+// Handle PDF generation request
+if (isset($_GET['generate_pdf']) && $_GET['generate_pdf'] === '1') {
+    // Include TCPDF library
+    require_once 'vendor/autoload.php';
+    require_once 'data_helper.php';
+
+    // Get parameters
+    $barcode_id = isset($_GET['barcode']) ? $_GET['barcode'] : '';
+    $name = isset($_GET['name']) ? $_GET['name'] : '';
+    $course = isset($_GET['course']) ? $_GET['course'] : '';
+    $year = isset($_GET['year']) ? $_GET['year'] : '';
+
+    if (empty($barcode_id)) {
+        die('Missing barcode parameter');
+    }
+
+    // Load student data if not provided
+    if (empty($name) || empty($course) || empty($year)) {
+        $data = load_data();
+        $students = $data['students'] ?? [];
+        
+        foreach ($students as $student) {
+            if ($student['barcode'] === $barcode_id) {
+                $name = $student['name'] ?? '';
+                $course = $student['course'] ?? '';
+                $year = $student['course_year'] ?? '';
+                break;
+            }
+        }
+    }
+
+    // Create new PDF document
+    $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+
+    // Set document information
+    $pdf->SetCreator('Barcode Attendance System');
+    $pdf->SetAuthor('School System');
+    $pdf->SetTitle('Student ID Card - ' . $name);
+    $pdf->SetSubject('Student Identification Card');
+
+    // Remove default header/footer
+    $pdf->setPrintHeader(false);
+    $pdf->setPrintFooter(false);
+
+    // Set margins (minimal for ID card)
+    $pdf->SetMargins(10, 10, 10);
+    $pdf->SetAutoPageBreak(false, 0);
+
+    // Add a page
+    $pdf->AddPage();
+
+    // Set font
+    $pdf->SetFont('helvetica', 'B', 16);
+
+    // Card background and border
+    $pdf->SetFillColor(255, 255, 255); // White background
+    $pdf->SetDrawColor(0, 0, 0); // Black border
+    $pdf->SetLineWidth(2);
+
+    // Calculate card dimensions (larger size: 4.5" x 3" = 114.3mm x 76.2mm)
+    $card_width = 114.3;
+    $card_height = 76.2;
+    $card_x = ($pdf->getPageWidth() - $card_width) / 2;
+    $card_y = ($pdf->getPageHeight() - $card_height) / 2;
+
+    // Draw card border
+    $pdf->Rect($card_x, $card_y, $card_width, $card_height, 'D', array(), array(255, 255, 255));
+
+    // Header
+    $pdf->SetXY($card_x + 8, $card_y + 5);
+    $pdf->SetFont('helvetica', 'B', 14);
+    $pdf->SetTextColor(59, 130, 246); // Blue color
+    $pdf->Cell($card_width - 16, 10, 'STUDENT ID CARD', 0, 1, 'C');
+
+    // Draw line under header
+    $pdf->SetDrawColor(59, 130, 246);
+    $pdf->Line($card_x + 8, $card_y + 18, $card_x + $card_width - 8, $card_y + 18);
+
+    // Reset text color to black
+    $pdf->SetTextColor(0, 0, 0);
+
+    // Check if barcode image exists
+    $barcode_path = "barcodes/{$barcode_id}.png";
+    $barcode_exists = file_exists($barcode_path);
+
+    if ($barcode_exists) {
+        // Add barcode image (centered, much larger size for better scanning)
+        $barcode_width = 55;
+        $barcode_height = 12;
+        $barcode_x = $card_x + ($card_width - $barcode_width) / 2;
+        $barcode_y = $card_y + 22;
+        
+        $pdf->Image($barcode_path, $barcode_x, $barcode_y, $barcode_width, $barcode_height);
+        
+        // Barcode ID text below barcode
+        $pdf->SetXY($card_x + 8, $barcode_y + $barcode_height + 2);
+        $pdf->SetFont('courier', 'B', 10);
+        $pdf->Cell($card_width - 16, 5, $barcode_id, 0, 1, 'C');
+    } else {
+        // If barcode doesn't exist, show text placeholder
+        $pdf->SetXY($card_x + 8, $card_y + 25);
+        $pdf->SetFont('helvetica', 'B', 10);
+        $pdf->Cell($card_width - 16, 8, 'BARCODE: ' . $barcode_id, 0, 1, 'C');
+    }
+
+    // Student information section
+    $info_y = $card_y + 45;
+
+    // Check for student picture
+    $picture_path = "student_pictures/{$barcode_id}.jpg";
+    $picture_exists = file_exists($picture_path);
+
+    if ($picture_exists) {
+        // Add student picture (left side, larger)
+        $picture_size = 18;
+        $picture_x = $card_x + 8;
+        $pdf->Image($picture_path, $picture_x, $info_y, $picture_size, $picture_size);
+        $info_text_x = $picture_x + $picture_size + 5;
+        $info_width = $card_width - $picture_size - 21;
+    } else {
+        // No picture, use full width for text
+        $info_text_x = $card_x + 8;
+        $info_width = $card_width - 16;
+        
+        // Draw placeholder for picture (larger)
+        $pdf->SetDrawColor(200, 200, 200);
+        $pdf->SetFillColor(245, 245, 245);
+        $pdf->Rect($card_x + 8, $info_y, 18, 18, 'DF');
+        $pdf->SetXY($card_x + 12, $info_y + 6);
+        $pdf->SetFont('helvetica', '', 12);
+        $pdf->SetTextColor(150, 150, 150);
+        $pdf->Cell(10, 6, '👤', 0, 1, 'C');
+        $pdf->SetTextColor(0, 0, 0);
+        
+        $info_text_x = $card_x + 30;
+        $info_width = $card_width - 38;
+    }
+
+    // Student information
+    $pdf->SetFont('helvetica', 'B', 9);
+    $line_height = 4;
+
+    // ID
+    $pdf->SetXY($info_text_x, $info_y);
+    $pdf->Cell(15, $line_height, 'ID:', 0, 0, 'L');
+    $pdf->SetFont('helvetica', '', 9);
+    $pdf->Cell($info_width - 15, $line_height, $barcode_id, 0, 1, 'L');
+
+    // Name
+    $pdf->SetXY($info_text_x, $info_y + $line_height);
+    $pdf->SetFont('helvetica', 'B', 9);
+    $pdf->Cell(15, $line_height, 'Name:', 0, 0, 'L');
+    $pdf->SetFont('helvetica', '', 9);
+    $pdf->Cell($info_width - 15, $line_height, $name, 0, 1, 'L');
+
+    // Strand
+    $pdf->SetXY($info_text_x, $info_y + ($line_height * 2));
+    $pdf->SetFont('helvetica', 'B', 9);
+    $pdf->Cell(15, $line_height, 'Strand:', 0, 0, 'L');
+    $pdf->SetFont('helvetica', '', 9);
+    $pdf->Cell($info_width - 15, $line_height, $course, 0, 1, 'L');
+
+    // Year
+    $pdf->SetXY($info_text_x, $info_y + ($line_height * 3));
+    $pdf->SetFont('helvetica', 'B', 9);
+    $pdf->Cell(15, $line_height, 'Year:', 0, 0, 'L');
+    $pdf->SetFont('helvetica', '', 9);
+    $pdf->Cell($info_width - 15, $line_height, $year, 0, 1, 'L');
+
+    // Footer
+    $footer_y = $card_y + $card_height - 8;
+    $pdf->SetDrawColor(200, 200, 200);
+    $pdf->Line($card_x + 8, $footer_y - 1, $card_x + $card_width - 8, $footer_y - 1);
+
+    $pdf->SetXY($card_x + 8, $footer_y);
+    $pdf->SetFont('helvetica', '', 8);
+    $pdf->SetTextColor(150, 150, 150);
+    $today = date('F j, Y');
+    $pdf->Cell($card_width - 16, 6, "Issued: {$today}", 0, 1, 'C');
+
+    // Set filename
+    $filename = "StudentID_" . preg_replace('/[^a-zA-Z0-9_-]/', '', $name) . "_" . $barcode_id . ".pdf";
+
+    // Output PDF for download
+    header('Content-Type: application/pdf');
+    header('Content-Disposition: attachment; filename="' . $filename . '"');
+    header('Cache-Control: private, max-age=0, must-revalidate');
+    header('Pragma: public');
+
+    $pdf->Output($filename, 'D');
+    exit();
+}
+
 // Set timezone to Philippines
 date_default_timezone_set('Asia/Manila');
 
@@ -139,8 +332,6 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
     <title>Dashboard - Barcode Attendance</title>
     <link href="tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         #deleteModal, #errorModal {
             display: none;
@@ -1650,110 +1841,54 @@ $filtered_attendance = array_values($filtered_attendance); // Reindex array
                 }
             });
             
-            // Print ID Card function - Generate and Download PDF
+            // Print ID Card function - Now generates PDF download within same file
             function printIDCard(barcodeId, name, course, year) {
-                // Populate print container with data
-                document.getElementById('printBarcodeImage').src = `barcodes/${barcodeId}.png`;
-                document.getElementById('printBarcodeId').textContent = barcodeId;
-                document.getElementById('printBarcodeIdText').textContent = barcodeId;
-                document.getElementById('printName').textContent = name;
-                document.getElementById('printStrand').textContent = course;
-                document.getElementById('printYear').textContent = year;
+                // Create download URL with parameters for internal PDF generation
+                const params = new URLSearchParams({
+                    generate_pdf: '1',
+                    barcode: barcodeId,
+                    name: name,
+                    course: course,
+                    year: year
+                });
                 
-                const today = new Date();
-                const dateStr = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-                document.getElementById('printDate').textContent = `Issued: ${dateStr}`;
+                const downloadUrl = `index.php?${params.toString()}`;
                 
-                // Handle student picture in print container
-                const printStudentPicture = document.getElementById('printStudentPicture');
-                const studentPicturePreview = document.getElementById('studentPicturePreview');
+                // Create temporary link element and trigger download
+                const link = document.createElement('a');
+                link.href = downloadUrl;
+                link.download = `StudentID_${name.replace(/[^a-zA-Z0-9_-]/g, '')}_${barcodeId}.pdf`;
+                link.style.display = 'none';
                 
-                if (studentPicturePreview.src && studentPicturePreview.style.display !== 'none') {
-                    // Clear previous content and set the image
-                    printStudentPicture.innerHTML = '';
-                    const img = document.createElement('img');
-                    img.src = studentPicturePreview.src;
-                    img.style.width = '100%';
-                    img.style.height = '100%';
-                    img.style.objectFit = 'cover';
-                    img.style.borderRadius = '2px';
-                    printStudentPicture.appendChild(img);
-                } else {
-                    // Show emoji icon if no picture
-                    printStudentPicture.innerHTML = '👤';
-                }
+                // Add to DOM, click, and remove
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
                 
-                // Show print container temporarily for PDF generation
-                const printContainer = document.getElementById('printContainer');
-                printContainer.classList.remove('id-card-print-hidden');
-                printContainer.style.position = 'absolute';
-                printContainer.style.top = '-9999px';
-                printContainer.style.left = '-9999px';
-                
-                // Wait for image to load, then generate PDF
-                const barcodeImg = document.getElementById('printBarcodeImage');
-                const generatePDF = async () => {
-                    try {
-                        // Get the ID card element
-                        const idCard = document.querySelector('.id-card-print');
-                        
-                        // Use html2canvas to convert the ID card to canvas
-                        const canvas = await html2canvas(idCard, {
-                            scale: 3, // High resolution for better quality
-                            backgroundColor: '#ffffff',
-                            logging: false,
-                            useCORS: true,
-                            allowTaint: true,
-                            foreignObjectRendering: true,
-                            imageTimeout: 15000,
-                            removeContainer: false
-                        });
-                        
-                        // Create jsPDF instance with ID card dimensions
-                        const { jsPDF } = window.jspdf;
-                        const pdf = new jsPDF({
-                            orientation: 'landscape',
-                            unit: 'in',
-                            format: [3.5, 2.25] // ID card size
-                        });
-                        
-                        // Calculate dimensions to fit the canvas in PDF
-                        const imgWidth = 3.5;
-                        const imgHeight = 2.25;
-                        
-                        // Convert canvas to image and add to PDF
-                        const imgData = canvas.toDataURL('image/jpeg', 1.0);
-                        pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
-                        
-                        // Generate filename with student name and ID
-                        const fileName = `StudentID_${name.replace(/[^a-zA-Z0-9]/g, '_')}_${barcodeId}.pdf`;
-                        
-                        // Download the PDF
-                        pdf.save(fileName);
-                        
-                        // Show success message
-                        console.log('PDF generated successfully:', fileName);
-                        
-                    } catch (error) {
-                        console.error('Error generating PDF:', error);
-                        alert('Error generating PDF. Please try again.');
-                    } finally {
-                        // Hide print container
-                        printContainer.classList.add('id-card-print-hidden');
-                        printContainer.style.position = '';
-                        printContainer.style.top = '';
-                        printContainer.style.left = '';
-                    }
-                };
-                
-                // Check if barcode image is already loaded
-                if (barcodeImg.complete && barcodeImg.naturalHeight !== 0) {
-                    setTimeout(generatePDF, 100);
-                } else {
-                    // Wait for barcode image to load
-                    barcodeImg.onload = () => setTimeout(generatePDF, 100);
-                    barcodeImg.onerror = () => setTimeout(generatePDF, 100);
-                }
+                // Show success message
+                setTimeout(() => {
+                    const successMsg = document.createElement('div');
+                    successMsg.style.cssText = `
+                        position: fixed;
+                        top: 20px;
+                        right: 20px;
+                        background: #10b981;
+                        color: white;
+                        padding: 12px 20px;
+                        border-radius: 6px;
+                        font-weight: 600;
+                        z-index: 10000;
+                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                    `;
+                    successMsg.textContent = `PDF ID Card downloaded for ${name}`;
+                    document.body.appendChild(successMsg);
+                    
+                    setTimeout(() => {
+                        if (successMsg.parentNode) {
+                            successMsg.parentNode.removeChild(successMsg);
+                        }
+                    }, 3000);
+                }, 100);
             }
             
             // Handle Time In / Time Out selection in modal
